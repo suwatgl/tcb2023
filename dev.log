@@ -1,0 +1,13 @@
+Template
+  Vue.js
+  template_vuejs_startup
+
+<!-- copy the following folder and paste it into vue folder project -->
+/admin/template/assets/css >> paste it into >> /admin/template/template_vue/src/assets/css
+/admin/template/assets/img >> paste it into >> /admin/template/template_vue/public/assets/img
+
+<!-- run the following command -->
+cd /your-path-url/template_vue
+npm install --force
+npm install axios jquery popper.js vee-validate@3 vue-analytics vuex
+npm run serve
