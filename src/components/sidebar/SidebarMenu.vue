@@ -1,6 +1,7 @@
 <script>
 const sidebarMenu = [
   { path: '/home', icon: 'fa fa-home', title: 'หน้าหลัก' },
+  { path: '/dashboard', icon: 'fas fa-chart-line', title: 'Dashboard' },
   { path: '/patient', icon: 'fa fa-chalkboard-user', title: 'ประวัติเวชระเบียน', auth: true },
   { path: '/approve', icon: 'fa fa-clipboard-check', title: 'ประวัติรอ Approve', auth: true },
   { path: '/refer-send', icon: 'fa fa-truck-medical', title: 'ส่ง Refer ไปยัง รพ.อื่น', auth: true },

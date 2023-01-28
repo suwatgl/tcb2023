@@ -1,6 +1,6 @@
 <template>
   <div>
-    <b-modal id="modal-patient-search" ref="modalPatientSearch" size="xl" :hide-footer="true">
+    <b-modal id="modal-patient-import-search" ref="modalPatientImportSearch" size="xl" :hide-footer="true">
       <template #modal-title> ค้นหาข้อมูลผู้ป่วยต่างโรงพยาบาล </template>
       <div>
         <b-card no-body class="bg-gray-100">
@@ -36,7 +36,7 @@
                     </validation-provider>
                   </b-col>
                   <b-col sm="8" md="8" lg="4" xl="4" class="pb-1">
-                    <button type="button" class="btn btn-xl btn-warning ms-5px" @click="patientSearch()"><i class="fas fa-plus"></i> ค้นหาผู้ป่วยต่าง รพ.</button>
+                    <button type="button" class="btn btn-xl btn-warning ms-5px" @click="patientImportSearch()"><i class="fas fa-plus"></i> ค้นหาผู้ป่วยต่าง รพ.</button>
                   </b-col>
                 </b-row>
                 <b-row>
@@ -182,7 +182,7 @@
                             <b-tr>
                               <b-td class="w-150px fw-bold" sticky-column variant="info">42. ICD-10</b-td>
                               <b-td class="w-200px" v-for="cancer in curr_cancers" :key="cancer.id">
-                                {{ cancer.icd10_code }}
+                                {{ cancer.icd10_text }}
                               </b-td>
                             </b-tr>
                             <b-tr>
@@ -277,7 +277,7 @@
                   </b-card>
                   <b-row>
                     <b-col class="pt-2 pb-1 text-end">
-                      <button type="button" class="btn btn-lg btn-primary ms-5px" @click="patientSearch()"><i class="fas fa-plus"></i> นำไปใช้ ทะเบียนมะเร็ง/Anywhere</button>
+                      <button type="button" class="btn btn-lg btn-primary ms-5px" @click="handleSubmit()"><i class="fas fa-plus"></i> นำไปใช้ ทะเบียนมะเร็ง/Anywhere</button>
                     </b-col>
                   </b-row>
                 </div>
@@ -295,7 +295,7 @@ import Patient from '../../_models/patient'
 // import PatientCancer from '../../_models/patient_cancer'
 
 export default {
-  name: 'PatientSearch',
+  name: 'PatientImportSearch',
   data() {
     return {
       status: false,
@@ -330,11 +330,11 @@ export default {
       this.curr_files = []
 
       this.$nextTick(() => {
-        this.$refs['modalPatientSearch'].show()
+        this.$refs['modalPatientImportSearch'].show()
         loader.hide()
       })
     },
-    patientSearch() {
+    patientImportSearch() {
       this.$refs.form.validate().then((success) => {
         if (!success) {
           this.$toast.error('ข้อมูลไม่ครบถ้วนสมบูรณ์ กรุณาตรวจสอบอีกครั้ง !')
@@ -378,6 +378,26 @@ export default {
           return
         }
       })
+      
+      let loader = this.$loading.show()
+        this.axios
+          .get(`tcb/patients?t=get-patient-import-other-hospital&id=${this.curr_patient.id}&hn_no=${this.hn_no}`)
+          .then((response) => {
+            if (response.data.status) {
+              this.$nextTick(() => {
+                this.$parent.loadItems()
+                this.$bvModal.hide('modal-patient-import-search')
+                loader.hide()
+              })
+            } else {
+              loader.hide()
+              this.$toast.error(response.data.message)
+            }
+          })
+          .catch((error) => {
+            loader.hide()
+            console.log(error.response.data.message)
+          })
     },
     getReference() {
       this.axios.get('tcb/cancers?t=get-reference').then((response) => {
@@ -393,4 +413,10 @@ export default {
 }
 </script>
 
-<style></style>
+<style scope>
+.topiclabel {
+  color: rgb(8, 88, 8);
+  font-weight: bolder;
+  text-align: right;
+}
+</style>

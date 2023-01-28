@@ -9,6 +9,7 @@
           { field: 'full_name', label: 'ชื่อ-สกุล' },
           { field: 'birth_date', label: 'ว/ด/ป เกิด' },
           { field: 'cid', label: 'เลขบัตรประชาชน' },
+          { field: 'telephone_1', label: 'โทรศัพท์' },
           { field: 'updated_at', label: 'Last Update' },
           { field: 'btn', width: '45px', thClass: 'text-center', tdClass: 'text-center p-4px', label: 'Ac', html: true },
         ]"
@@ -16,7 +17,7 @@
         :lineNumbers="true"
         :select-options="{ enabled: false }"
         :search-options="{ enabled: true, skipDiacritics: true, placeholder: 'ค้นหาข้อมูล' }"
-        :pagination-options="{ enabled: true }"
+        :pagination-options="{ enabled: true, dropdownAllowAll: false }"
         :sort-options="{ enabled: false }"
         :totalRows="totalRecords"
         :isLoading.sync="isLoading"
@@ -35,8 +36,8 @@
         <div slot="table-actions">
           <button type="button" class="btn btn-success ms-5px" @click="loadItems()"><i class="fas fa-rotate"></i></button>
           <button type="button" class="btn btn-success ms-5px" @click="showPatientForm()"><i class="fas fa-plus"></i> เพิ่มข้อมูลใหม่</button>
-          <button type="button" class="btn btn-warning ms-5px" @click="showPatientSearch()"><i class="fas fa-plus"></i> ค้นหาผู้ป่วยต่าง รพ.</button>
-          <button type="button" class="btn btn-danger ms-5px" @click="showPatientSearch()"><i class="fas fa-plus"></i> นำเข้าจาก Refer</button>
+          <button type="button" class="btn btn-warning ms-5px" @click="showPatientImportSearch()"><i class="fas fa-plus"></i> ค้นหาผู้ป่วยต่าง รพ.</button>
+          <button type="button" class="btn btn-danger ms-5px" @click="showPatientImportRefer()"><i class="fas fa-plus"></i> นำเข้าจาก Refer</button>
         </div>
         <div slot="selected-row-actions">
           <button class="btn btn-xs btn-primary me-2">Action 1</button>
@@ -72,7 +73,8 @@
 
     <patient-form ref="patient_form"></patient-form>
     <patient-refer ref="patient_refer"></patient-refer>
-    <patient-search ref="patient_search"></patient-search>
+    <patient-import-search ref="patient_import_search"></patient-import-search>
+    <patient-import-refer ref="patient_import_refer"></patient-import-refer>
   </div>
 </template>
 
@@ -81,14 +83,16 @@ import _ from 'lodash'
 // import moment from 'moment'
 import PatientForm from './PatientForm.vue'
 import PatientRefer from './PatientRefer.vue'
-import PatientSearch from './PatientSearch.vue'
+import PatientImportSearch from './PatientImportSearch.vue'
+import PatientImportRefer from './PatientImportRefer.vue'
 
 export default {
   name: 'PatientTable',
   components: {
     PatientForm,
     PatientRefer,
-    PatientSearch,
+    PatientImportSearch,
+    PatientImportRefer,
   },
   data() {
     return {
@@ -127,6 +131,7 @@ export default {
   },
   mounted() {
     this.loadItems()
+    this.loadAllReference()
   },
   methods: {
     showEdit(id) {
@@ -135,8 +140,11 @@ export default {
     showRefer(id, full_name) {
       this.$refs.patient_refer.showForm(id, full_name)
     },
-    showPatientSearch() {
-      this.$refs.patient_search.showForm()
+    showPatientImportSearch() {
+      this.$refs.patient_import_search.showForm()
+    },
+    showPatientImportRefer() {
+      this.$refs.patient_import_refer.showForm()
     },
     showDelete(id) {
       const h = this.$createElement
@@ -200,6 +208,34 @@ export default {
       this.loadItems()
       return false
     }, 250),
+    loadAllReference() {
+      this.axios.get('tcb/patients?t=get-all-reference').then((response) => {
+        let ref = {}
+
+        ref.hos_list = [{ value: this.currentUser.hosCode, text: this.currentUser.hosName }]
+
+        ref.title_list = response.data.title_list
+        ref.sex_list = response.data.sex_list
+        ref.nationality_list = response.data.nationality_list
+        ref.deathcause_list = response.data.deathcause_list
+
+        ref.finance_support_list = response.data.finance_support_list
+        ref.diagnosis_list = response.data.diagnosis_list
+        ref.topo_list = response.data.topo_list
+        ref.morphology_list = response.data.morphology_list
+        ref.behaviour_list = response.data.behaviour_list
+        ref.grade_list = response.data.grade_list
+        ref.t_list = response.data.t_list
+        ref.n_list = response.data.n_list
+        ref.m_list = response.data.m_list
+        ref.stage_list = response.data.stage_list
+        ref.extension_list = response.data.extension_list
+        ref.icd10_list = response.data.icd10_list
+        ref.treatment_list = response.data.treatment_list
+
+        localStorage.setItem('data_reference', JSON.stringify(ref))
+      })
+    },
   },
 }
 </script>

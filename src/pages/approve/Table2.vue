@@ -15,7 +15,7 @@
       :lineNumbers="true"
       :select-options="{ enabled: false }"
       :search-options="{ enabled: true, skipDiacritics: true, placeholder: 'ค้นหาข้อมูล' }"
-      :pagination-options="{ enabled: true }"
+      :pagination-options="{ enabled: true, dropdownAllowAll: false }"
       :sort-options="{ enabled: false }"
       :totalRows="totalRecords"
       :isLoading.sync="isLoading"

@@ -2,6 +2,7 @@
 const routes = [
   { path: '*', redirect: '/user/login-v3' },
   { path: '/home', name: 'home', component: () => import('../pages/Home.vue') },
+  { path: '/dashboard', name: 'dashboard', component: () => import('../pages/Dashboard-v3.vue') },
   { path: '/patient', name: 'patient', component: () => import('../pages/patient/Dashboard.vue') },
   { path: '/patient/:id', name: 'patient_detail', component: () => import('../pages/patient/PatientDetail.vue') },
   { path: '/approve', name: 'approve', component: () => import('../pages/approve/Dashboard.vue') },

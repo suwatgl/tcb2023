@@ -12,6 +12,7 @@
                     <b-th class="w-150px" sticky-column variant="info">รายการ</b-th>
                     <b-th class="w-200px" v-for="(cancer, idx) in cancers" :key="cancer.id">รายละเอียดโรคมะเร็ง <br />ครั้งที่ {{ cancers.length - idx }}</b-th>
                     <b-th class="w-300px" v-show="sum_new.diagnosis_date">สรุปโรคมะเร็งครั้งปัจจุบัน</b-th>
+                    <b-th></b-th>
                   </b-tr>
                 </b-thead>
                 <b-tbody>
@@ -19,6 +20,7 @@
                     <b-td class="w-150px fw-bold" sticky-column variant="info">25. วันที่เข้ารับบริการ</b-td>
                     <b-td class="w-200px" v-for="cancer in cancers" :key="cancer.id">{{ cancer.entrance_date | moment('add', '543 years', 'DD/MM/YYYY') }}</b-td>
                     <b-td class="w-300px" v-show="sum_new.diagnosis_date"></b-td>
+                    <b-td></b-td>
                   </b-tr>
                   <b-tr>
                     <b-td class="w-150px fw-bold" sticky-column variant="info">26. สิทธิการรักษา</b-td>
@@ -28,6 +30,7 @@
                     <b-td class="w-300px" v-show="sum_new.diagnosis_date">
                       {{ sum_new.finance_support_text }}
                     </b-td>
+                    <b-td></b-td>
                   </b-tr>
                   <b-tr>
                     <b-td class="w-150px fw-bold" sticky-column variant="info">27. วันที่วินิจฉัย</b-td>
@@ -37,6 +40,7 @@
                     <b-td class="w-300px" v-show="sum_new.diagnosis_date">
                       {{ sum_new.diagnosis_date | moment('add', '543 years', 'DD/MM/YYYY') }}
                     </b-td>
+                    <b-td></b-td>
                   </b-tr>
                   <b-tr>
                     <b-td class="w-150px fw-bold" sticky-column variant="info">28. วิธีวินิจฉัย</b-td>
@@ -46,6 +50,7 @@
                     <b-td class="w-300px" v-show="sum_new.diagnosis_date">
                       {{ sum_new.diagnosis_text }}
                     </b-td>
+                    <b-td></b-td>
                   </b-tr>
                   <b-tr>
                     <b-td class="w-150px fw-bold" sticky-column variant="info">29. วินิจฉัยนอก รพ</b-td>
@@ -55,6 +60,7 @@
                     <b-td class="w-300px text-nowrap p-2" v-show="sum_new.diagnosis_date">
                       <b-form-checkbox plain v-model="sum_new.diagnosis_out" value="1" unchecked-value="0" disabled><span> วินิจฉัยนอก รพ</span> </b-form-checkbox>
                     </b-td>
+                    <b-td></b-td>
                   </b-tr>
                   <b-tr>
                     <b-td class="w-150px fw-bold" sticky-column variant="info">30. วันที่ตัดชิ้นเนื้อ</b-td>
@@ -64,6 +70,7 @@
                     <b-td class="w-300px" v-show="sum_new.diagnosis_date">
                       {{ sum_new.excision_in_cut_date | moment('add', '543 years', 'DD/MM/YYYY') }}
                     </b-td>
+                    <b-td></b-td>
                   </b-tr>
                   <b-tr>
                     <b-td class="w-150px fw-bold" sticky-column variant="info">31. วันที่อ่านชิ้นเนื้อ</b-td>
@@ -73,6 +80,7 @@
                     <b-td class="w-300px" v-show="sum_new.diagnosis_date">
                       {{ sum_new.excision_in_read_date | moment('add', '543 years', 'DD/MM/YYYY') }}
                     </b-td>
+                    <b-td></b-td>
                   </b-tr>
                   <b-tr>
                     <b-td class="w-150px fw-bold" sticky-column variant="info">32. Topography</b-td>
@@ -82,6 +90,7 @@
                     <b-td class="w-300px" v-show="sum_new.diagnosis_date">
                       {{ sum_new.topo_text }}
                     </b-td>
+                    <b-td></b-td>
                   </b-tr>
                   <b-tr>
                     <b-td class="w-150px fw-bold" sticky-column variant="info">33. Recurrent</b-td>
@@ -91,6 +100,7 @@
                     <b-td class="w-300px text-nowrap p-2" v-show="sum_new.diagnosis_date">
                       <b-form-checkbox plain v-model="sum_new.recurrent" value="1" unchecked-value="0" disabled><span> Recurrent</span> </b-form-checkbox>
                     </b-td>
+                    <b-td></b-td>
                   </b-tr>
                   <b-tr>
                     <b-td class="w-150px fw-bold" sticky-column variant="info">34. วันที่ Recurrent</b-td>
@@ -100,6 +110,7 @@
                     <b-td class="w-300px" v-show="sum_new.diagnosis_date">
                       {{ sum_new.recurrent_date | moment('add', '543 years', 'DD/MM/YYYY') }}
                     </b-td>
+                    <b-td></b-td>
                   </b-tr>
                   <b-tr>
                     <b-td class="w-150px fw-bold" sticky-column variant="info">35. Morphology</b-td>
@@ -109,6 +120,7 @@
                     <b-td class="w-300px" v-show="sum_new.diagnosis_date">
                       {{ sum_new.morphology_text }}
                     </b-td>
+                    <b-td></b-td>
                   </b-tr>
                   <b-tr>
                     <b-td class="w-150px fw-bold" sticky-column variant="info">36. Behaviour</b-td>
@@ -118,6 +130,7 @@
                     <b-td class="w-300px" v-show="sum_new.diagnosis_date">
                       {{ sum_new.behaviour_text }}
                     </b-td>
+                    <b-td></b-td>
                   </b-tr>
                   <b-tr>
                     <b-td class="w-150px fw-bold" sticky-column variant="info">37. Grade</b-td>
@@ -127,11 +140,13 @@
                     <b-td class="w-300px" v-show="sum_new.diagnosis_date">
                       {{ sum_new.grade_text }}
                     </b-td>
+                    <b-td></b-td>
                   </b-tr>
                   <b-tr>
                     <b-td class="w-150px fw-bold" sticky-column variant="info">38. T-N-M</b-td>
                     <b-td class="w-200px" v-for="cancer in cancers" :key="cancer.id"> {{ t_list_arr[cancer.t_code] }} - {{ n_list_arr[cancer.n_code] }} - {{ m_list_arr[cancer.m_code] }} </b-td>
                     <b-td class="w-300px" v-show="sum_new.diagnosis_date"> {{ t_list_arr[sum_new.t_code] }} - {{ n_list_arr[sum_new.n_code] }} - {{ m_list_arr[sum_new.m_code] }} </b-td>
+                    <b-td></b-td>
                   </b-tr>
                   <b-tr>
                     <b-td class="w-150px fw-bold" sticky-column variant="info">39. วันที่ TNM/Stage</b-td>
@@ -141,6 +156,7 @@
                     <b-td class="w-300px" v-show="sum_new.diagnosis_date">
                       {{ sum_new.tnm_date | moment('add', '543 years', 'DD/MM/YYYY') }}
                     </b-td>
+                    <b-td></b-td>
                   </b-tr>
                   <b-tr>
                     <b-td class="w-150px fw-bold" sticky-column variant="info">40. Stage</b-td>
@@ -150,6 +166,7 @@
                     <b-td class="w-300px" v-show="sum_new.diagnosis_date">
                       {{ stage_list_arr[sum_new.stage_code] }}
                     </b-td>
+                    <b-td></b-td>
                   </b-tr>
                   <b-tr>
                     <b-td class="w-150px fw-bold" sticky-column variant="info">41. Extend</b-td>
@@ -159,15 +176,17 @@
                     <b-td class="w-300px" v-show="sum_new.diagnosis_date">
                       {{ extension_list_arr[sum_new.extension_code] }}
                     </b-td>
+                    <b-td></b-td>
                   </b-tr>
                   <b-tr>
                     <b-td class="w-150px fw-bold" sticky-column variant="info">42. ICD-10</b-td>
                     <b-td class="w-200px" v-for="cancer in cancers" :key="cancer.id">
-                      {{ cancer.icd10_code }}
+                      {{ cancer.icd10_text }}
                     </b-td>
                     <b-td class="w-300px" v-show="sum_new.diagnosis_date">
-                      {{ sum_new.icd10_code }}
+                      {{ sum_new.icd10_text }}
                     </b-td>
+                    <b-td></b-td>
                   </b-tr>
                   <b-tr>
                     <b-td class="w-150px fw-bold" sticky-column variant="info">43. Metastasis</b-td>
@@ -249,30 +268,27 @@
                         </b-col>
                       </b-row>
                     </b-td>
+                    <b-td></b-td>
                   </b-tr>
                   <b-tr>
                     <b-td class="w-150px fw-bold" sticky-column variant="info">44. Treatment</b-td>
                     <b-td class="w-200px" v-for="cancer in cancers" :key="cancer.id">
                       <b-row v-for="(treat, idx) in cancer.treatments" :key="treat.id">
-                        <b-col md="12">
-                          <span class="fw-bold">
-                            {{ treat.treatment_code }}<span v-show="treat.treatment_date"> ({{ treat.treatment_date | moment('add', '543 years', 'DD/MM/YYYY') }})</span>
-                          </span>
-                        </b-col>
+                        <b-col md="12"><span class="fw-bold w-100px">Treatment :</span> {{ treat.treatment_code }}</b-col>
+                        <b-col md="12"><span class="fw-bold">เริ่มต้น :</span> {{ treat.treatment_date | moment('add', '543 years', 'DD/MM/YYYY') }}</b-col>
+                        <b-col md="12"><span class="fw-bold">สิ้นสุด :</span> {{ treat.treatment_date_end | moment('add', '543 years', 'DD/MM/YYYY') }}</b-col>
                         <b-col md="12">{{ treat.note }}</b-col>
                         <b-col md="12" v-show="idx < cancer.treatments.length - 1"><hr class="m-1" /></b-col>
                       </b-row>
                     </b-td>
                     <b-td class="w-300px" v-show="sum_new.diagnosis_date"></b-td>
+                    <b-td></b-td>
                   </b-tr>
                   <b-tr>
                     <b-td class="w-150px fw-bold" sticky-column variant="info">45. Clinical Summary</b-td>
-                    <b-td class="w-200px" v-for="cancer in cancers" :key="cancer.id">
-                      <pre class="mb-2px">{{ cancer.clinical_summary }}</pre>
-                    </b-td>
-                    <b-td class="w-300px" v-show="sum_new.diagnosis_date">
-                      <pre class="mb-2px">{{ sum_new.clinical_summary }}</pre>
-                    </b-td>
+                    <b-td class="w-200px" v-for="cancer in cancers" :key="cancer.id">{{ cancer.clinical_summary }}</b-td>
+                    <b-td class="w-300px" v-show="sum_new.diagnosis_date">{{ sum_new.clinical_summary }}</b-td>
+                    <b-td></b-td>
                   </b-tr>
                   <b-tr>
                     <b-td class="w-150px fw-bold" sticky-column variant="info">46. เอกสารแนบ</b-td>
@@ -288,6 +304,7 @@
                       </b-row>
                     </b-td>
                     <b-td class="w-300px" v-show="sum_new.diagnosis_date"></b-td>
+                    <b-td></b-td>
                   </b-tr>
                 </b-tbody>
               </b-table-simple>

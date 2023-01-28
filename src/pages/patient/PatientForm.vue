@@ -85,7 +85,10 @@
                       </b-form-group>
                     </validation-provider>
                   </b-col>
-                  <b-col sm="4" md="4" lg="2" xl="2" class="mt-2 topiclabel">
+                  <b-col sm="4" md="4" lg="1" xl="1" class="mt-3">
+                    <span v-if="curr_age">( อายุ {{ curr_age }}) </span>
+                  </b-col>
+                  <b-col sm="4" md="4" lg="1" xl="1" class="mt-2 topiclabel">
                     <label for="input-sex-code" class="fs-5">8. เพศ:</label>
                   </b-col>
                   <b-col sm="8" md="8" lg="2" xl="2" class="pb-1">
@@ -305,7 +308,7 @@
                     <label for="input-entrance-date" class="fs-5">25. วันที่เข้ารับบริการ:</label>
                   </b-col>
                   <b-col sm="8" md="8" lg="3" xl="3" class="pb-1">
-                    <validation-provider rules="required" name="entrance_date">
+                    <validation-provider rules="required|date_format_th" name="entrance_date">
                       <b-form-group slot-scope="{ valid, errors }">
                         <masked-input autocomplete="off" pattern="11/11/1111" :class="'form-control ' + (errors[0] ? 'is-invalid' : valid ? 'is-valid' : '')" v-model="curr_cancer.entrance_date" :state="errors[0] ? false : valid ? true : null"></masked-input>
                       </b-form-group>
@@ -399,7 +402,7 @@
                     <label for="input-laterality" class="fs-5">34. ว/ด/ป Recurrent:</label>
                   </b-col>
                   <b-col sm="8" md="8" lg="2" xl="2" class="pb-1">
-                    <validation-provider :rules="{ required: curr_cancer.recurrent == 1 ? true : false }" name="recurrent_date">
+                    <validation-provider :rules="{ required: curr_cancer.recurrent == 1 ? true : false, date_format_th: true }" name="recurrent_date">
                       <b-form-group slot-scope="{ valid, errors }">
                         <masked-input autocomplete="off" pattern="11/11/1111" :class="'form-control ' + (errors[0] ? 'is-invalid' : valid ? 'is-valid' : '')" v-model="curr_cancer.recurrent_date" :disabled="curr_cancer.recurrent == 1 ? false : true" :state="errors[0] ? false : valid ? true : null"></masked-input>
                       </b-form-group>
@@ -645,15 +648,12 @@
                     <b-button size="sm" variant="success" @click="addTradtment"><i class="fas fa-plus"></i> เพิ่มรายการ Treatment</b-button>
                   </b-col>
                 </b-row>
-                <b-row>
-                  <b-col><hr class="m-1" /></b-col>
-                </b-row>
                 <div v-for="(treat, idx) in curr_treatments" :key="treat.id">
                   <b-row class="mt-2">
                     <b-col sm="4" md="4" lg="2" xl="2" class="mt-2 topiclabel">
                       <label for="input-met-7-other" class="fs-5">Treatment ครั้งที่ {{ idx + 1 }}:</label>
                     </b-col>
-                    <b-col sm="8" md="8" lg="4" xl="4">
+                    <b-col sm="8" md="8" lg="3" xl="3">
                       <validation-provider :rules="{ required: true }" :name="'treatment_code_' + idx">
                         <b-form-group slot-scope="{ valid, errors }">
                           <b-form-input plain :list="'treatment-list_' + idx" v-model="curr_treatments[idx].treatment_code" :state="errors[0] ? false : valid ? true : null"></b-form-input>
@@ -663,13 +663,23 @@
                         </b-form-group>
                       </validation-provider>
                     </b-col>
-                    <b-col sm="4" md="4" lg="3" xl="3" class="mt-2 topiclabel">
-                      <label for="input-met-7-other" class="fs-5">ว/ด/ป (พ.ศ.) Treatment :</label>
+                    <b-col sm="4" md="4" lg="1" xl="1" class="mt-2 topiclabel">
+                      <label for="input-met-7-other" class="fs-5">วันที่เริ่ม</label>
                     </b-col>
                     <b-col sm="8" md="8" lg="2" xl="2">
                       <validation-provider :rules="{ required: true, date_format_th: true }" :name="'treatment_date_' + idx">
                         <b-form-group slot-scope="{ valid, errors }">
                           <masked-input autocomplete="off" pattern="11/11/1111" v-model="curr_treatments[idx].treatment_date" :class="'form-control ' + (errors[0] ? 'is-invalid' : valid ? 'is-valid' : '')" :state="errors[0] ? false : valid ? true : null"></masked-input>
+                        </b-form-group>
+                      </validation-provider>
+                    </b-col>
+                    <b-col sm="4" md="4" lg="1" xl="1" class="mt-2 topiclabel">
+                      <label for="input-met-7-other" class="fs-5">วันที่สิ้นสุด</label>
+                    </b-col>
+                    <b-col sm="8" md="8" lg="2" xl="2">
+                      <validation-provider :rules="{ required: false, date_format_th: true }" :name="'treatment_date_end_' + idx">
+                        <b-form-group slot-scope="{ valid, errors }">
+                          <masked-input autocomplete="off" pattern="11/11/1111" v-model="curr_treatments[idx].treatment_date_end" :class="'form-control ' + (errors[0] ? 'is-invalid' : valid ? 'is-valid' : '')" :state="errors[0] ? false : valid ? true : null"></masked-input>
                         </b-form-group>
                       </validation-provider>
                     </b-col>
@@ -681,30 +691,30 @@
                   </b-row>
                   <b-row class="mt-2">
                     <b-col sm="4" md="4" lg="2" xl="2" class="mt-2 topiclabel">
-                      <label for="input-met-7-other" class="fs-5"></label>
-                    </b-col>
-                    <b-col sm="8" md="8" lg="2" xl="2" class="pt-2">
-                      <b-form-checkbox plain v-model="curr_treatments[idx].none_protocol" value="1" unchecked-value="0"><span class="topiclabel fs-5">Non protocol</span> </b-form-checkbox>
-                    </b-col>
-                  </b-row>
-                  <b-row class="mt-2">
-                    <b-col sm="4" md="4" lg="2" xl="2" class="mt-2 topiclabel">
-                      <label for="input-met-7-other" class="fs-5">Non protocol regimen</label>
-                    </b-col>
-                    <b-col sm="8" md="8" lg="4" xl="4" class="mt-2 mb-2">
-                      <validation-provider :rules="{}">
-                        <b-form-group>
-                          <b-form-textarea v-model="curr_treatments[idx].none_protocol_note" type="text" rows="3"></b-form-textarea>
-                        </b-form-group>
-                      </validation-provider>
-                    </b-col>
-                    <b-col sm="4" md="4" lg="1" xl="1" class="mt-2 topiclabel">
                       <label for="input-met-7-other" class="fs-5">Note :</label>
                     </b-col>
-                    <b-col sm="8" md="8" lg="4" xl="4" class="mt-2 mb-2">
+                    <b-col sm="8" md="8" lg="9" xl="9" class="mt-2 mb-2">
                       <validation-provider :rules="{}" :name="'note_' + idx">
                         <b-form-group>
                           <b-form-textarea :id="'note_' + idx" v-model="curr_treatments[idx].note" type="text" rows="3"></b-form-textarea>
+                        </b-form-group>
+                      </validation-provider>
+                    </b-col>
+                  </b-row>
+                  <b-row class="mt-2" v-show="curr_treatments[idx].treatment_code == '3 Chemotherapy' ? true : false">
+                    <b-col sm="4" md="4" lg="2" xl="2" class="mt-2 topiclabel">
+                      <label for="input-met-7-other" class="fs-5">Non protocol</label>
+                    </b-col>
+                    <b-col sm="8" md="8" lg="1" xl="1" class="pt-2">
+                      <b-form-checkbox plain v-model="curr_treatments[idx].none_protocol" value="1" unchecked-value="0"><span class="topiclabel fs-5"></span> </b-form-checkbox>
+                    </b-col>
+                    <b-col sm="4" md="4" lg="2" xl="2" class="mt-2 topiclabel">
+                      <label for="input-met-7-other" class="fs-5">Non protocol regimen</label>
+                    </b-col>
+                    <b-col sm="8" md="8" lg="6" xl="6" class="mt-2 mb-2">
+                      <validation-provider :rules="{}">
+                        <b-form-group>
+                          <b-form-textarea v-model="curr_treatments[idx].none_protocol_note" type="text" rows="3"></b-form-textarea>
                         </b-form-group>
                       </validation-provider>
                     </b-col>
@@ -714,14 +724,13 @@
                   <b-col><hr class="m-1" /></b-col>
                 </b-row>
                 <b-row class="mt-2">
-                  <b-col sm="4" md="4" lg="12" xl="12">
+                  <b-col sm="4" md="4" lg="2" xl="2">
                     <h6 class="text-pink-600 fs-5 pt-2">45. Clinical Summary</h6>
                   </b-col>
-                  <b-col sm="4" md="4" lg="2" xl="2"></b-col>
-                  <b-col sm="8" md="8" lg="10" xl="10" class="mt-2 mb-2">
+                  <b-col sm="8" md="8" lg="9" xl="9" class="mt-2 mb-2">
                     <validation-provider :rules="{}" name="clinical_summary">
                       <b-form-group>
-                        <b-form-textarea id="clinical_summary" v-model="curr_cancer.clinical_summary" type="text" rows="3"></b-form-textarea>
+                        <b-form-textarea id="clinical_summary" v-model="curr_cancer.clinical_summary" type="text" rows="5"></b-form-textarea>
                       </b-form-group>
                     </validation-provider>
                   </b-col>
@@ -736,9 +745,6 @@
                   <b-col sm="4" md="4" lg="2" xl="2" class="mb-2">
                     <b-button size="sm" variant="success" @click="addFile"><i class="fas fa-plus"></i> เพิ่มเอกสารแนบ</b-button>
                   </b-col>
-                </b-row>
-                <b-row>
-                  <b-col><hr class="m-1" /></b-col>
                 </b-row>
                 <div v-for="(file, idx) in curr_files" :key="file.id">
                   <b-row class="mt-2">
@@ -769,9 +775,6 @@
                     </b-col>
                   </b-row>
                 </div>
-                <b-row>
-                  <b-col><hr class="m-1" /></b-col>
-                </b-row>
               </b-container>
             </form>
           </validation-observer>
@@ -795,6 +798,7 @@ export default {
       curr_cancer: new PatientCancer(),
       curr_treatments: [],
       curr_files: [],
+      curr_age: null,
       icd10_disabled: false,
       hos_list: [],
       title_list: [],
@@ -840,6 +844,36 @@ export default {
     },
   },
   watch: {
+    'curr_patient.cid'(newVal) {
+      if (newVal != null && this.create_mode && newVal.length == 17 && newVal.indexOf('_') == -1 && newVal != '0-0000-00000-00-0') {
+        let loader = this.$loading.show()
+        this.axios
+          .get(`tcb/patients?t=get-patient-by-cid&hospital_code=${this.currentUser.hosCode}&cid=${newVal}`)
+          .then((res) => {
+            if (res.data.state) {
+              const h = this.$createElement
+              const titleModal = h('div', { domProps: { innerHTML: '<i class="fa fa-trash"></i> พบเลขบัตรประชาชนซ้ำกับที่มีอยู่แล้ว' } })
+              this.$bvModal.msgBoxConfirm('พบข้อมูลผู้ป่วยที่มีเลขบัตรประชาชนนี้อยู่ในฐานข้อมูลแล้ว ท่านต้องการแสดงรายละเอียดของผู้ป่วยนี้เพิ่มข้อมูลโรคมะเร็งใหม่ ใช่หรือไม่.', { title: [titleModal], size: 'md', okVariant: 'warning', okTitle: 'ใช่', cancelTitle: 'ไม่ใช่' }).then((value) => {
+                if (value) {
+                  this.$bvModal.hide('modal-patient-form')
+                  this.$nextTick(() => {
+                    this.$router.push({ name: 'patient_detail', params: { id: res.data.patient.id } })
+                  })
+                } else {
+                  this.curr_patient.cid = ''
+                }
+              })
+            } else {
+              this.$toast.success(`ไม่พบเลขบัตรฯ "${newVal}" ในฐานข้อมูล ท่านสามารถเพิ่มรายการผู้ป่วยใหม่นี้ได้`)
+            }
+            loader.hide()
+          })
+          .catch((error) => {
+            console.log(error.response.data.message)
+            loader.hide()
+          })
+      }
+    },
     'curr_cancer.recurrent'(newVal) {
       if (newVal == 0) {
         this.curr_cancer.recurrent_date = null
@@ -888,8 +922,10 @@ export default {
       }
     },
     'curr_patient.birth_date'(newVal) {
+      this.curr_age = null
       if (newVal == null || newVal == '') return
       if (moment(newVal, 'DD/MM/YYYY', true).isValid()) {
+        this.curr_age = moment(newVal, 'DD/MM/YYYY').add(-543, 'years').fromNow(true)
         this.getIcd10()
       }
     },
@@ -1028,7 +1064,10 @@ export default {
         })
       } else {
         this.create_mode = true
-        this.resetForm()
+        this.curr_patient = new Patient()
+        this.curr_cancer = new PatientCancer()
+        this.curr_treatments = []
+        this.curr_files = []
         this.getReferenceCancer()
         this.getReference(null)
         this.$nextTick(() => {
@@ -1060,6 +1099,7 @@ export default {
             },
           }
 
+          let loader = this.$loading.show()
           this.axios
             .post('tcb/patients', param, { headers: { 'Content-Type': 'multipart/form-data' } })
             .then((res) => {
@@ -1068,13 +1108,16 @@ export default {
                 this.$parent.loadItems()
                 this.$nextTick(() => {
                   this.$bvModal.hide('modal-patient-form')
+                  loader.hide()
                 })
               } else {
                 this.$toast.error(res.data.message)
+                loader.hide()
               }
             })
             .catch((error) => {
               console.log(error.response.data.message)
+              loader.hide()
             })
           // ถ้าเป็นการ Update ข้อมูล Patient
         } else {
@@ -1085,6 +1128,7 @@ export default {
             },
           }
 
+          let loader = this.$loading.show()
           this.axios
             .put(`tcb/patients/${this.curr_patient.id}`, param)
             .then((res) => {
@@ -1093,18 +1137,29 @@ export default {
                 this.$parent.loadItems()
                 this.$nextTick(() => {
                   this.$bvModal.hide('modal-patient-form')
+                  loader.hide()
                 })
               } else {
                 this.$toast.error(res.data.message)
+                loader.hide()
               }
             })
             .catch((error) => {
               console.log(error.response.data.message)
+              loader.hide()
             })
         }
       })
     },
     getReference(id) {
+      let ref = JSON.parse(localStorage.getItem('data_reference'))
+
+      this.hos_list = ref.hos_list
+      this.title_list = ref.title_list
+      this.sex_list = ref.sex_list
+      this.nationality_list = ref.nationality_list
+      this.deathcause_list = ref.deathcause_list
+
       this.axios.get('tcb/patients?t=get-reference' + (id ? '&id=' + id : '')).then((response) => {
         this.curr_patient.hospital_code = this.currentUser.hosCode
         this.curr_patient.address_province_id = response.data.address_province_id
@@ -1114,35 +1169,52 @@ export default {
         this.curr_patient.permanent_address_district_id = response.data.permanent_address_district_id
         this.curr_patient.permanent_address_sub_district_id = response.data.permanent_address_sub_district_id
 
+        this.title_list = []
+        this.sex_list = []
+        this.nationality_list = []
+        this.deathcause_list = []
+        this.address_province_list = []
+        this.address_district_list = []
+        this.address_sub_district_list = []
+        this.permanent_address_province_list = []
+        this.permanent_address_district_list = []
+        this.permanent_address_sub_district_list = []
+
         this.hos_list = [{ value: this.currentUser.hosCode, text: this.currentUser.hosName }]
-        this.title_list = response.data.title_list
-        this.sex_list = response.data.sex_list
-        this.nationality_list = response.data.nationality_list
-        this.deathcause_list = response.data.deathcause_list
-        this.address_province_list = response.data.address_province_list
-        this.address_district_list = response.data.address_district_list
-        this.address_sub_district_list = response.data.address_sub_district_list
-        this.permanent_address_province_list = response.data.permanent_address_province_list
-        this.permanent_address_district_list = response.data.permanent_address_district_list
-        this.permanent_address_sub_district_list = response.data.permanent_address_sub_district_list
+        Object.entries(response.data.title_list).map(([key, val]) => this.title_list.push({ value: key, text: val }))
+        Object.entries(response.data.sex_list).map(([key, val]) => this.sex_list.push({ value: key, text: val }))
+        Object.entries(response.data.nationality_list).map(([key, val]) => this.nationality_list.push({ value: key, text: val }))
+        Object.entries(response.data.deathcause_list).map(([key, val]) => this.deathcause_list.push({ value: key, text: val }))
+        Object.entries(response.data.address_province_list).map(([key, val]) => this.address_province_list.push({ value: key, text: val }))
+        this.address_province_list.sort((a, b) => (a.text > b.text ? 1 : -1))
+        Object.entries(response.data.address_district_list).map(([key, val]) => this.address_district_list.push({ value: key, text: val }))
+        this.address_district_list.sort((a, b) => (a.text > b.text ? 1 : -1))
+        Object.entries(response.data.address_sub_district_list).map(([key, val]) => this.address_sub_district_list.push({ value: key, text: val }))
+        this.address_sub_district_list.sort((a, b) => (a.text > b.text ? 1 : -1))
+        Object.entries(response.data.permanent_address_province_list).map(([key, val]) => this.permanent_address_province_list.push({ value: key, text: val }))
+        this.permanent_address_province_list.sort((a, b) => (a.text > b.text ? 1 : -1))
+        Object.entries(response.data.permanent_address_district_list).map(([key, val]) => this.permanent_address_district_list.push({ value: key, text: val }))
+        this.permanent_address_district_list.sort((a, b) => (a.text > b.text ? 1 : -1))
+        Object.entries(response.data.permanent_address_sub_district_list).map(([key, val]) => this.permanent_address_sub_district_list.push({ value: key, text: val }))
+        this.permanent_address_sub_district_list.sort((a, b) => (a.text > b.text ? 1 : -1))
       })
     },
     getReferenceCancer() {
-      this.axios.get('tcb/cancers?t=get-reference').then((response) => {
-        this.finance_support_list = response.data.finance_support_list
-        this.diagnosis_list = response.data.diagnosis_list
-        this.topo_list = response.data.topo_list
-        this.morphology_list = response.data.morphology_list
-        this.behaviour_list = response.data.behaviour_list
-        this.grade_list = response.data.grade_list
-        this.t_list = response.data.t_list
-        this.n_list = response.data.n_list
-        this.m_list = response.data.m_list
-        this.stage_list = response.data.stage_list
-        this.extension_list = response.data.extension_list
-        this.icd10_list = response.data.icd10_list
-        this.treatment_list = response.data.treatment_list
-      })
+      let ref = JSON.parse(localStorage.getItem('data_reference'))
+
+      this.finance_support_list = ref.finance_support_list
+      this.diagnosis_list = ref.diagnosis_list
+      this.topo_list = ref.topo_list
+      this.morphology_list = ref.morphology_list
+      this.behaviour_list = ref.behaviour_list
+      this.grade_list = ref.grade_list
+      this.t_list = ref.t_list
+      this.n_list = ref.n_list
+      this.m_list = ref.m_list
+      this.stage_list = ref.stage_list
+      this.extension_list = ref.extension_list
+      this.icd10_list = ref.icd10_list
+      this.treatment_list = ref.treatment_list
     },
     changeProvince() {
       this.address_sub_district_list = []
@@ -1152,7 +1224,8 @@ export default {
       if (this.curr_patient.address_province_id) {
         let url = `tcb/patients?t=get-reference-districts&province_id=${this.curr_patient.address_province_id}`
         this.axios.get(url).then((response) => {
-          this.address_district_list = response.data.district_list
+          Object.entries(response.data.district_list).map(([key, val]) => this.address_district_list.push({ value: key, text: val }))
+          this.address_district_list.sort((a, b) => (a.text > b.text ? 1 : -1))
         })
       }
     },
@@ -1162,7 +1235,8 @@ export default {
       if (this.curr_patient.address_district_id) {
         let url = `tcb/patients?t=get-reference-sub-districts&district_id=${this.curr_patient.address_district_id}`
         this.axios.get(url).then((response) => {
-          this.address_sub_district_list = response.data.sub_district_list
+          Object.entries(response.data.sub_district_list).map(([key, val]) => this.address_sub_district_list.push({ value: key, text: val }))
+          this.address_sub_district_list.sort((a, b) => (a.text > b.text ? 1 : -1))
         })
       }
     },
@@ -1174,7 +1248,8 @@ export default {
       if (this.curr_patient.permanent_address_province_id) {
         let url = `tcb/patients?t=get-reference-districts&province_id=${this.curr_patient.permanent_address_province_id}`
         this.axios.get(url).then((response) => {
-          this.permanent_address_district_list = response.data.district_list
+          Object.entries(response.data.district_list).map(([key, val]) => this.permanent_address_district_list.push({ value: key, text: val }))
+          this.permanent_address_district_list.sort((a, b) => (a.text > b.text ? 1 : -1))
         })
       }
     },
@@ -1184,14 +1259,10 @@ export default {
       if (this.curr_patient.permanent_address_district_id) {
         let url = `tcb/patients?t=get-reference-sub-districts&district_id=${this.curr_patient.permanent_address_district_id}`
         this.axios.get(url).then((response) => {
-          this.permanent_address_sub_district_list = response.data.sub_district_list
+          Object.entries(response.data.sub_district_list).map(([key, val]) => this.permanent_address_sub_district_list.push({ value: key, text: val }))
+          this.permanent_address_sub_district_list.sort((a, b) => (a.text > b.text ? 1 : -1))
         })
       }
-    },
-    resetForm() {
-      this.curr_patient = new Patient()
-      this.curr_treatments = []
-      this.curr_files = []
     },
     setAddress() {
       this.permanent_address_province_list = this.address_province_list
@@ -1217,7 +1288,7 @@ export default {
       this.curr_patient.address_sub_district_id = this.curr_patient.permanent_address_sub_district_id
     },
     addTradtment() {
-      this.curr_treatments.push({ treatment_code: null, treatment_date: null, none_protocol: 0, none_protocol_note: '', note: '' })
+      this.curr_treatments.push({ treatment_code: null, treatment_date: null, treatment_date_end: null, none_protocol: 0, none_protocol_note: '', note: '' })
     },
     removeTreatment(idx) {
       this.$nextTick(() => {

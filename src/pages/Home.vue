@@ -44,7 +44,6 @@ export default {
   },
   created() {
     AppOptions.appEmpty = false
-    this.user = JSON.parse(localStorage.getItem('user'))
   },
   computed: {
     loggedIn() {

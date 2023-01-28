@@ -85,7 +85,10 @@
                       </b-form-group>
                     </validation-provider>
                   </b-col>
-                  <b-col sm="4" md="4" lg="2" xl="2" class="mt-2 topiclabel">
+                  <b-col sm="4" md="4" lg="1" xl="1" class="mt-3">
+                    <span v-if="curr_age">( อายุ {{ curr_age }}) </span>
+                  </b-col>
+                  <b-col sm="4" md="4" lg="1" xl="1" class="mt-2 topiclabel">
                     <label for="input-sex-code" class="fs-5">8. เพศ:</label>
                   </b-col>
                   <b-col sm="8" md="8" lg="2" xl="2" class="pb-1">
@@ -309,6 +312,7 @@ export default {
     return {
       create_mode: true,
       curr_patient: new Patient(null, null),
+      curr_age: null,
       hos_list: [],
       title_list: [],
       sex_list: [],
@@ -330,14 +334,24 @@ export default {
       return this.$store.state.auth.user
     },
   },
+  watch: {
+    'curr_patient.birth_date'(newVal) {
+      this.curr_age = null
+      if (newVal == null || newVal == '') return
+      if (moment(newVal, 'DD/MM/YYYY', true).isValid()) {
+        this.curr_age = moment(newVal, 'DD/MM/YYYY').add(-543, 'years').fromNow(true)
+      }
+    }
+  },
   methods: {
     showForm(id) {
       let loader = this.$loading.show()
       this.create_mode = false
       this.getReference(id)
-      this.axios.get(`tcb/patients/${id}`).then((response) => {
+      this.axios.get(`tcb/patients/${id}/edit`).then((response) => {
         this.curr_patient = new Patient(response.data.id, response.data)
         this.curr_patient.birth_date = moment(response.data.birth_date).add(543, 'years').format('DD/MM/YYYY')
+        this.curr_patient.death_date = response.data.death_date ? moment(response.data.death_date).add(543, 'years').format('DD/MM/YYYY') : null
         this.$nextTick(() => {
           this.$refs['modalPatientFormUpdate'].show()
           loader.hide()
@@ -355,6 +369,7 @@ export default {
           return
         }
 
+        let loader = this.$loading.show()
         this.axios
           .put(`tcb/patients/${this.curr_patient.id}`, this.curr_patient)
           .then((res) => {
@@ -363,13 +378,16 @@ export default {
               this.$parent.loadItems()
               this.$nextTick(() => {
                 this.$bvModal.hide('modal-patient-form-update')
+                loader.hide()
               })
             } else {
               this.$toast.error(res.data.message)
+              loader.hide()
             }
           })
           .catch((error) => {
             console.log(error.response.data.message)
+            loader.hide()
           })
       })
     },
@@ -383,17 +401,34 @@ export default {
         this.curr_patient.permanent_address_district_id = response.data.permanent_address_district_id
         this.curr_patient.permanent_address_sub_district_id = response.data.permanent_address_sub_district_id
 
+        this.title_list = []
+        this.sex_list = []
+        this.nationality_list = []
+        this.deathcause_list = []
+        this.address_province_list = []
+        this.address_district_list = []
+        this.address_sub_district_list = []
+        this.permanent_address_province_list = []
+        this.permanent_address_district_list = []
+        this.permanent_address_sub_district_list = []
+
         this.hos_list = [{ value: this.currentUser.hosCode, text: this.currentUser.hosName }]
-        this.title_list = response.data.title_list
-        this.sex_list = response.data.sex_list
-        this.nationality_list = response.data.nationality_list
-        this.deathcause_list = response.data.deathcause_list
-        this.address_province_list = response.data.address_province_list
-        this.address_district_list = response.data.address_district_list
-        this.address_sub_district_list = response.data.address_sub_district_list
-        this.permanent_address_province_list = response.data.permanent_address_province_list
-        this.permanent_address_district_list = response.data.permanent_address_district_list
-        this.permanent_address_sub_district_list = response.data.permanent_address_sub_district_list
+        Object.entries(response.data.title_list).map(([key, val]) => this.title_list.push({ value: key, text: val }))
+        Object.entries(response.data.sex_list).map(([key, val]) => this.sex_list.push({ value: key, text: val }))
+        Object.entries(response.data.nationality_list).map(([key, val]) => this.nationality_list.push({ value: key, text: val }))
+        Object.entries(response.data.deathcause_list).map(([key, val]) => this.deathcause_list.push({ value: key, text: val }))
+        Object.entries(response.data.address_province_list).map(([key, val]) => this.address_province_list.push({ value: key, text: val }))
+        this.address_province_list.sort((a, b) => (a.text > b.text ? 1 : -1))
+        Object.entries(response.data.address_district_list).map(([key, val]) => this.address_district_list.push({ value: key, text: val }))
+        this.address_district_list.sort((a, b) => (a.text > b.text ? 1 : -1))
+        Object.entries(response.data.address_sub_district_list).map(([key, val]) => this.address_sub_district_list.push({ value: key, text: val }))
+        this.address_sub_district_list.sort((a, b) => (a.text > b.text ? 1 : -1))
+        Object.entries(response.data.permanent_address_province_list).map(([key, val]) => this.permanent_address_province_list.push({ value: key, text: val }))
+        this.permanent_address_province_list.sort((a, b) => (a.text > b.text ? 1 : -1))
+        Object.entries(response.data.permanent_address_district_list).map(([key, val]) => this.permanent_address_district_list.push({ value: key, text: val }))
+        this.permanent_address_district_list.sort((a, b) => (a.text > b.text ? 1 : -1))
+        Object.entries(response.data.permanent_address_sub_district_list).map(([key, val]) => this.permanent_address_sub_district_list.push({ value: key, text: val }))
+        this.permanent_address_sub_district_list.sort((a, b) => (a.text > b.text ? 1 : -1))
       })
     },
     changeProvince() {
@@ -404,7 +439,8 @@ export default {
       if (this.curr_patient.address_province_id) {
         let url = `tcb/patients?t=get-reference-districts&province_id=${this.curr_patient.address_province_id}`
         this.axios.get(url).then((response) => {
-          this.address_district_list = response.data.district_list
+          Object.entries(response.data.district_list).map(([key, val]) => this.address_district_list.push({ value: key, text: val }))
+          this.address_district_list.sort((a, b) => (a.text > b.text ? 1 : -1))
         })
       }
     },
@@ -414,7 +450,8 @@ export default {
       if (this.curr_patient.address_district_id) {
         let url = `tcb/patients?t=get-reference-sub-districts&district_id=${this.curr_patient.address_district_id}`
         this.axios.get(url).then((response) => {
-          this.address_sub_district_list = response.data.sub_district_list
+          Object.entries(response.data.sub_district_list).map(([key, val]) => this.address_sub_district_list.push({ value: key, text: val }))
+          this.address_sub_district_list.sort((a, b) => (a.text > b.text ? 1 : -1))
         })
       }
     },
@@ -426,7 +463,8 @@ export default {
       if (this.curr_patient.permanent_address_province_id) {
         let url = `tcb/patients?t=get-reference-districts&province_id=${this.curr_patient.permanent_address_province_id}`
         this.axios.get(url).then((response) => {
-          this.permanent_address_district_list = response.data.district_list
+          Object.entries(response.data.district_list).map(([key, val]) => this.permanent_address_district_list.push({ value: key, text: val }))
+          this.permanent_address_district_list.sort((a, b) => (a.text > b.text ? 1 : -1))
         })
       }
     },
@@ -436,7 +474,8 @@ export default {
       if (this.curr_patient.permanent_address_district_id) {
         let url = `tcb/patients?t=get-reference-sub-districts&district_id=${this.curr_patient.permanent_address_district_id}`
         this.axios.get(url).then((response) => {
-          this.permanent_address_sub_district_list = response.data.sub_district_list
+          Object.entries(response.data.sub_district_list).map(([key, val]) => this.permanent_address_sub_district_list.push({ value: key, text: val }))
+          this.permanent_address_sub_district_list.sort((a, b) => (a.text > b.text ? 1 : -1))
         })
       }
     },

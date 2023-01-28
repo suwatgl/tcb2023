@@ -13,6 +13,7 @@ export default class PatientCancer {
     this.diagnosis_text = null
     this.diagnosis_out = null
     this.icd10_code = null
+    this.icd10_text = null
     this.topo_id = null
     this.topo_code = null
     this.topo_text = null
@@ -33,8 +34,8 @@ export default class PatientCancer {
     this.metastasis_organ = null
     this.lifestatus_code = null
     this.last_seen = null
-    this.death_date = null
-    this.deathcause_code = null
+    // this.death_date = null
+    // this.deathcause_code = null
     this.txt_clinical_sammary = null
     this.txt_patho = null
     this.txt_lab = null

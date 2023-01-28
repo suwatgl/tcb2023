@@ -30,9 +30,9 @@
                 <dd class="col-md-4 pt-1">เลขที่ {{ curr_patient.address_no }} ม.{{ curr_patient.address_moo }} ต.{{ curr_patient.sub_district_name_th }} อ.{{ curr_patient.district_name_th }} จ.{{ curr_patient.province_name_th }} {{ curr_patient.address_zipcode }}</dd>
                 <dt class="col-md-2 text-end topiclabel fs-5">อีเมล์ :</dt>
                 <dd class="col-md-4 pt-1">{{ curr_patient.email }}</dd>
-                <dt class="col-md-2 text-end topiclabel fs-5">เบอร์โทรศัพท์ 1 :</dt>
+                <dt class="col-md-2 text-end topiclabel fs-5">โทรศัพท์ 1 :</dt>
                 <dd class="col-md-4 pt-1">{{ curr_patient.telephone_1 }}</dd>
-                <dt class="col-md-2 text-end topiclabel fs-5">เบอร์โทรศัพท์ 2 :</dt>
+                <dt class="col-md-2 text-end topiclabel fs-5">โทรศัพท์ 2 :</dt>
                 <dd class="col-md-4 pt-1">{{ curr_patient.telephone_2 }}</dd>
               </dl>
               <b-container fluid>
@@ -135,6 +135,7 @@
                     <b-th class="w-150px" sticky-column variant="info">รายการ</b-th>
                     <b-th class="w-200px" v-for="(cancer, idx) in cancers" :key="cancer.id">รายละเอียดโรคมะเร็ง <br />ครั้งที่ {{ cancers.length - idx }}</b-th>
                     <b-th class="w-300px" v-show="sum_new.diagnosis_date">สรุปโรคมะเร็งครั้งปัจจุบัน</b-th>
+                    <b-th></b-th>
                   </b-tr>
                 </b-thead>
                 <b-tbody>
@@ -142,6 +143,7 @@
                     <b-td class="w-150px fw-bold" sticky-column variant="info">25. วันที่เข้ารับบริการ</b-td>
                     <b-td class="w-200px" v-for="cancer in cancers" :key="cancer.id">{{ cancer.entrance_date | moment('add', '543 years', 'DD/MM/YYYY') }}</b-td>
                     <b-td class="w-300px" v-show="sum_new.diagnosis_date"></b-td>
+                    <b-td></b-td>
                   </b-tr>
                   <b-tr>
                     <b-td class="w-150px fw-bold" sticky-column variant="info">26. สิทธิการรักษา</b-td>
@@ -151,6 +153,7 @@
                     <b-td class="w-300px" v-show="sum_new.diagnosis_date">
                       {{ sum_new.finance_support_text }}
                     </b-td>
+                    <b-td></b-td>
                   </b-tr>
                   <b-tr>
                     <b-td class="w-150px fw-bold" sticky-column variant="info">27. วันที่วินิจฉัย</b-td>
@@ -160,6 +163,7 @@
                     <b-td class="w-300px" v-show="sum_new.diagnosis_date">
                       {{ sum_new.diagnosis_date | moment('add', '543 years', 'DD/MM/YYYY') }}
                     </b-td>
+                    <b-td></b-td>
                   </b-tr>
                   <b-tr>
                     <b-td class="w-150px fw-bold" sticky-column variant="info">28. วิธีวินิจฉัย</b-td>
@@ -169,6 +173,7 @@
                     <b-td class="w-300px" v-show="sum_new.diagnosis_date">
                       {{ sum_new.diagnosis_text }}
                     </b-td>
+                    <b-td></b-td>
                   </b-tr>
                   <b-tr>
                     <b-td class="w-150px fw-bold" sticky-column variant="info">29. วินิจฉัยนอก รพ</b-td>
@@ -178,6 +183,7 @@
                     <b-td class="w-300px text-nowrap p-2" v-show="sum_new.diagnosis_date">
                       <b-form-checkbox plain v-model="sum_new.diagnosis_out" value="1" unchecked-value="0" disabled><span> วินิจฉัยนอก รพ</span> </b-form-checkbox>
                     </b-td>
+                    <b-td></b-td>
                   </b-tr>
                   <b-tr>
                     <b-td class="w-150px fw-bold" sticky-column variant="info">30. วันที่ตัดชิ้นเนื้อ</b-td>
@@ -187,6 +193,7 @@
                     <b-td class="w-300px" v-show="sum_new.diagnosis_date">
                       {{ sum_new.excision_in_cut_date | moment('add', '543 years', 'DD/MM/YYYY') }}
                     </b-td>
+                    <b-td></b-td>
                   </b-tr>
                   <b-tr>
                     <b-td class="w-150px fw-bold" sticky-column variant="info">31. วันที่อ่านชิ้นเนื้อ</b-td>
@@ -196,6 +203,7 @@
                     <b-td class="w-300px" v-show="sum_new.diagnosis_date">
                       {{ sum_new.excision_in_read_date | moment('add', '543 years', 'DD/MM/YYYY') }}
                     </b-td>
+                    <b-td></b-td>
                   </b-tr>
                   <b-tr>
                     <b-td class="w-150px fw-bold" sticky-column variant="info">32. Topography</b-td>
@@ -205,6 +213,7 @@
                     <b-td class="w-300px" v-show="sum_new.diagnosis_date">
                       {{ sum_new.topo_text }}
                     </b-td>
+                    <b-td></b-td>
                   </b-tr>
                   <b-tr>
                     <b-td class="w-150px fw-bold" sticky-column variant="info">33. Recurrent</b-td>
@@ -214,6 +223,7 @@
                     <b-td class="w-300px text-nowrap p-2" v-show="sum_new.diagnosis_date">
                       <b-form-checkbox plain v-model="sum_new.recurrent" value="1" unchecked-value="0" disabled><span> Recurrent</span> </b-form-checkbox>
                     </b-td>
+                    <b-td></b-td>
                   </b-tr>
                   <b-tr>
                     <b-td class="w-150px fw-bold" sticky-column variant="info">34. วันที่ Recurrent</b-td>
@@ -223,6 +233,7 @@
                     <b-td class="w-300px" v-show="sum_new.diagnosis_date">
                       {{ sum_new.recurrent_date | moment('add', '543 years', 'DD/MM/YYYY') }}
                     </b-td>
+                    <b-td></b-td>
                   </b-tr>
                   <b-tr>
                     <b-td class="w-150px fw-bold" sticky-column variant="info">35. Morphology</b-td>
@@ -232,6 +243,7 @@
                     <b-td class="w-300px" v-show="sum_new.diagnosis_date">
                       {{ sum_new.morphology_text }}
                     </b-td>
+                    <b-td></b-td>
                   </b-tr>
                   <b-tr>
                     <b-td class="w-150px fw-bold" sticky-column variant="info">36. Behaviour</b-td>
@@ -241,6 +253,7 @@
                     <b-td class="w-300px" v-show="sum_new.diagnosis_date">
                       {{ sum_new.behaviour_text }}
                     </b-td>
+                    <b-td></b-td>
                   </b-tr>
                   <b-tr>
                     <b-td class="w-150px fw-bold" sticky-column variant="info">37. Grade</b-td>
@@ -250,11 +263,13 @@
                     <b-td class="w-300px" v-show="sum_new.diagnosis_date">
                       {{ sum_new.grade_text }}
                     </b-td>
+                    <b-td></b-td>
                   </b-tr>
                   <b-tr>
                     <b-td class="w-150px fw-bold" sticky-column variant="info">38. T-N-M</b-td>
                     <b-td class="w-200px" v-for="cancer in cancers" :key="cancer.id"> {{ t_list_arr[cancer.t_code] }} - {{ n_list_arr[cancer.n_code] }} - {{ m_list_arr[cancer.m_code] }} </b-td>
                     <b-td class="w-300px" v-show="sum_new.diagnosis_date"> {{ t_list_arr[sum_new.t_code] }} - {{ n_list_arr[sum_new.n_code] }} - {{ m_list_arr[sum_new.m_code] }} </b-td>
+                    <b-td></b-td>
                   </b-tr>
                   <b-tr>
                     <b-td class="w-150px fw-bold" sticky-column variant="info">39. วันที่ TNM/Stage</b-td>
@@ -264,6 +279,7 @@
                     <b-td class="w-300px" v-show="sum_new.diagnosis_date">
                       {{ sum_new.tnm_date | moment('add', '543 years', 'DD/MM/YYYY') }}
                     </b-td>
+                    <b-td></b-td>
                   </b-tr>
                   <b-tr>
                     <b-td class="w-150px fw-bold" sticky-column variant="info">40. Stage</b-td>
@@ -273,6 +289,7 @@
                     <b-td class="w-300px" v-show="sum_new.diagnosis_date">
                       {{ stage_list_arr[sum_new.stage_code] }}
                     </b-td>
+                    <b-td></b-td>
                   </b-tr>
                   <b-tr>
                     <b-td class="w-150px fw-bold" sticky-column variant="info">41. Extend</b-td>
@@ -282,15 +299,17 @@
                     <b-td class="w-300px" v-show="sum_new.diagnosis_date">
                       {{ extension_list_arr[sum_new.extension_code] }}
                     </b-td>
+                    <b-td></b-td>
                   </b-tr>
                   <b-tr>
                     <b-td class="w-150px fw-bold" sticky-column variant="info">42. ICD-10</b-td>
                     <b-td class="w-200px" v-for="cancer in cancers" :key="cancer.id">
-                      {{ cancer.icd10_code }}
+                      {{ cancer.icd10_text }}
                     </b-td>
                     <b-td class="w-300px" v-show="sum_new.diagnosis_date">
-                      {{ sum_new.icd10_code }}
+                      {{ sum_new.icd10_text }}
                     </b-td>
+                    <b-td></b-td>
                   </b-tr>
                   <b-tr>
                     <b-td class="w-150px fw-bold" sticky-column variant="info">43. Metastasis</b-td>
@@ -372,6 +391,7 @@
                         </b-col>
                       </b-row>
                     </b-td>
+                    <b-td></b-td>
                   </b-tr>
                   <b-tr>
                     <b-td class="w-150px fw-bold" sticky-column variant="info">44. Treatment</b-td>
@@ -387,30 +407,16 @@
                       </b-row>
                     </b-td>
                     <b-td class="w-300px" v-show="sum_new.diagnosis_date"></b-td>
+                    <b-td></b-td>
                   </b-tr>
                   <b-tr>
                     <b-td class="w-150px fw-bold" sticky-column variant="info">45. Clinical Summary</b-td>
                     <b-td class="w-200px" v-for="cancer in cancers" :key="cancer.id">
-                      <pre class="mb-2px">{{ cancer.clinical_summary }}</pre>
+                      {{ cancer.clinical_summary }}
+                      <hr class="m-1" />
                     </b-td>
-                    <b-td class="w-300px" v-show="sum_new.diagnosis_date">
-                      <pre class="mb-2px">{{ sum_new.clinical_summary }}</pre>
-                    </b-td>
-                  </b-tr>
-                  <b-tr>
-                    <b-td class="w-150px fw-bold" sticky-column variant="info">46. เอกสารแนบ</b-td>
-                    <b-td class="w-200px" v-for="cancer in cancers" :key="cancer.id">
-                      <b-row v-for="(file, idx) in cancer.files" :key="file.id">
-                        <b-col md="12">
-                          {{ file_group_list[file.file_group_id] }}
-                        </b-col>
-                        <b-col md="12">
-                          <a :href="'https://canceranywhere.com:8081/' + file.file_path" target="_blank">{{ file.file_name }}</a>
-                        </b-col>
-                        <b-col md="12" v-show="idx < cancer.files.length - 1"><hr class="m-1" /></b-col>
-                      </b-row>
-                    </b-td>
-                    <b-td class="w-300px" v-show="sum_new.diagnosis_date"></b-td>
+                    <b-td class="w-300px" v-show="sum_new.diagnosis_date">{{ sum_new.clinical_summary }}</b-td>
+                    <b-td></b-td>
                   </b-tr>
                 </b-tbody>
               </b-table-simple>
@@ -444,72 +450,6 @@
                 </b-tbody>
               </b-table-simple>
             </b-tab>
-            <b-tab title="บันทึกข้อมูลเพิ่มเติม" no-body>
-              <div class="widget-chat rounded">
-                <vue-custom-scrollbar style="height: 450px" class="widget-chat-body">
-                  <div class="widget-chat-item start">
-                    <div class="widget-chat-info">
-                      <div class="widget-chat-info-container">
-                        <div class="widget-chat-name text-indigo">สถาบันมะเร็งแห่งชาติ</div>
-                        <div class="widget-chat-message">ขอข้อมูลเพิ่มเติมการรักษาด้วยครับ</div>
-                        <div class="widget-chat-message text-gray-600">02/01/2566 12:45 น.</div>
-                      </div>
-                    </div>
-                  </div>
-                  <div class="widget-chat-item end">
-                    <div class="widget-chat-info">
-                      <div class="widget-chat-info-container">
-                        <div class="widget-chat-name text-red">โรงพยาบาลสุรินทร์</div>
-                        <div class="widget-chat-message">Update ข้อมูลเพิ่มเติม ให้แล้วค่ะ</div>
-                        <div class="widget-chat-message text-gray-600">02/01/2566 13:05 น.</div>
-                      </div>
-                    </div>
-                  </div>
-                  <div class="widget-chat-item start">
-                    <div class="widget-chat-info">
-                      <div class="widget-chat-info-container">
-                        <div class="widget-chat-name text-indigo">สถาบันมะเร็งแห่งชาติ</div>
-                        <div class="widget-chat-message">ยังไม่เห็นข้อมูลเลยครับ</div>
-                        <div class="widget-chat-message text-gray-600">02/01/2566 14:30 น.</div>
-                      </div>
-                    </div>
-                  </div>
-                  <div class="widget-chat-item end">
-                    <div class="widget-chat-info">
-                      <div class="widget-chat-info-container">
-                        <div class="widget-chat-name text-red">โรงพยาบาลสุรินทร์</div>
-                        <div class="widget-chat-message">
-                          #Avatar2 “คีรี” สองรูปล่างคือภาพคอนเซปต์อาร์ตดั้งเดิมค่ะ ซึ่งคุณ Sigourney Weaver (ผู้รับบทเกรซและคีรี) เห็นครั้งแรกแล้วไม่ค่อยชอบและคัดค้าน เพราะว่าการออกแบบแบบนี้ทำให้คีรีดู ‘สวยและเรียบร้อยเกินไป’ จากนั้นเธอก็แนะนำให้ออกแบบคีรีให้ดูเป็นวัยรุ่นที่มีความยุ่งเหยิง ให้ดูน่าอึดอัดใจมากขึ้น
-                          โดยชี้ให้เห็นว่าเด็กผู้หญิงหลายคนไม่รู้สึกราวกับว่าพวกเธอ "สวย" จากภายในค่า
-                        </div>
-                        <div class="widget-chat-message text-gray-600">02/01/2566 16:15 น.</div>
-                      </div>
-                    </div>
-                  </div>
-                  <div class="widget-chat-item start">
-                    <div class="widget-chat-info">
-                      <div class="widget-chat-info-container">
-                        <div class="widget-chat-name text-indigo">สถาบันมะเร็งแห่งชาติ</div>
-                        <div class="widget-chat-message">ขอบคุณครับ</div>
-                        <div class="widget-chat-message text-gray-600">02/01/2566 16:30 น.</div>
-                      </div>
-                    </div>
-                  </div>
-                </vue-custom-scrollbar>
-                <div class="widget-input">
-                  <form action="" method="POST" name="">
-                    <div class="widget-input-container">
-                      <div class="widget-input-box">
-                        <input type="text" class="form-control" placeholder="เขียนข้อความ..." />
-                      </div>
-                      <div class="widget-input-icon">
-                        <a href="#" class="text-gray-500"><i class="fas fa-location-arrow"></i></a>
-                      </div>
-                    </div>
-                  </form>
-                </div>
-              </div>
-            </b-tab>
           </b-tabs>
         </b-card>
       </b-container>
@@ -519,9 +459,9 @@
             <span class="fs-3 text-red-600">สถานะ : {{ refer_status[curr_refer.status] }}</span>
           </b-col>
           <b-col class="text-end pt-3">
-            <button v-show="[0, 1].includes(curr_refer.status)" type="button" class="btn btn-lg btn-success ms-5px" @click="receiveRefer"><i class="fas fa-plus"></i> รับ Refer.</button>
-            <button v-show="[0].includes(curr_refer.status)" type="button" class="btn btn-lg btn-warning ms-5px" @click="entreatRefer"><i class="fas fa-plus"></i> ขอข้อมูลเพิ่มเติม</button>
-            <button v-show="[0, 1].includes(curr_refer.status)" type="button" class="btn btn-lg btn-danger ms-5px" @click="rejectRefer"><i class="fas fa-trash"></i> ปฏิเสธรับ Refer</button>
+            <button v-show="[0, 1].includes(curr_refer.status)" type="button" class="btn btn-lg btn-success ms-5px" @click="referReceive"><i class="fas fa-plus"></i> รับ Refer.</button>
+            <button v-show="[0, 1].includes(curr_refer.status)" type="button" class="btn btn-lg btn-danger ms-5px" @click="referReject"><i class="fas fa-trash"></i> ปฏิเสธรับ Refer</button>
+            <button v-show="[0].includes(curr_refer.status)" type="button" class="btn btn-lg btn-warning ms-5px" @click="referRequest"><i class="fas fa-plus"></i> ขอข้อมูลเพิ่มเติม</button>
           </b-col>
         </b-row>
       </b-container>
@@ -556,53 +496,68 @@ export default {
     }
   },
   methods: {
-    entreatRefer() {
+    referRequest() {
+      this.$bvModal.hide('modal-refer-form-detail')
+      this.$nextTick(() => {
+        this.$parent.showReferFormRequest(this.patient_id, this.refer_id)
+      })
+
       // ขอข้อมูลเพิ่มเติม
-      const h = this.$createElement
-      const titleModal = h('div', { domProps: { innerHTML: '<i class="fa fa-trash"></i> ยืนยันการขอข้อมูลการ Refer เพิ่มเติม' } })
-      this.$bvModal.msgBoxConfirm('ท่านต้องการยืนยันการขอข้อมูลการ Refer เพิ่มเติมของผู้ป่วยที่เลือกนี้ ใช่หรือไม่.', { title: [titleModal], size: 'md', okVariant: 'warning', okTitle: 'ใช่', cancelTitle: 'ยกเลิก' }).then((value) => {
-        if (value) {
-          this.axios.put(`tcb/refers/${this.refer_id}`, { status: 1 }).then(() => {
-            this.$toast.success('ยืนยันการขอข้อมูลการ Refer เพิ่มเติมเรียบร้อย.')
-            this.$nextTick(() => {
-              this.$parent.loadItems()
-              this.$bvModal.hide('modal-refer-form-detail')
-            })
-          })
-        }
-      })
+      // const h = this.$createElement
+      // const titleModal = h('div', { domProps: { innerHTML: '<i class="fa fa-trash"></i> ยืนยันการขอข้อมูลการ Refer เพิ่มเติม' } })
+      // this.$bvModal.msgBoxConfirm('ท่านต้องการยืนยันการขอข้อมูลการ Refer เพิ่มเติมของผู้ป่วยที่เลือกนี้ ใช่หรือไม่.', { title: [titleModal], size: 'md', okVariant: 'warning', okTitle: 'ใช่', cancelTitle: 'ยกเลิก' }).then((value) => {
+      //   if (value) {
+      //     this.axios.put(`tcb/refers/${this.refer_id}`, { status: 1 }).then(() => {
+      //       this.$toast.success('ยืนยันการขอข้อมูลการ Refer เพิ่มเติมเรียบร้อย.')
+      //       this.$nextTick(() => {
+      //         this.$parent.loadItems()
+      //         this.$bvModal.hide('modal-refer-form-detail')
+      //       })
+      //     })
+      //   }
+      // })
     },
-    rejectRefer() {
+    referReject() {
+      this.$bvModal.hide('modal-refer-form-detail')
+      this.$nextTick(() => {
+        this.$parent.showReferFormReject(this.patient_id, this.refer_id)
+      })
+
       // ปฏิเสธการรับ Refer
-      const h = this.$createElement
-      const titleModal = h('div', { domProps: { innerHTML: '<i class="fa fa-trash"></i> ยืนยันการปฏิเสธการรับ Refer' } })
-      this.$bvModal.msgBoxConfirm('ท่านต้องการยืนยันการปฏิเสธการรับ Refer ผู้ป่วยที่เลือกนี้ ใช่หรือไม่.', { title: [titleModal], size: 'md', okVariant: 'danger', okTitle: 'ใช่', cancelTitle: 'ยกเลิก' }).then((value) => {
-        if (value) {
-          this.axios.put(`tcb/refers/${this.refer_id}`, { status: 3 }).then(() => {
-            this.$toast.success('ยืนยันการปฏิเสธการรับ Refer เรียบร้อย.')
-            this.$nextTick(() => {
-              this.$parent.loadItems()
-              this.$bvModal.hide('modal-refer-form-detail')
-            })
-          })
-        }
-      })
+      // const h = this.$createElement
+      // const titleModal = h('div', { domProps: { innerHTML: '<i class="fa fa-trash"></i> ยืนยันการปฏิเสธการรับ Refer' } })
+      // this.$bvModal.msgBoxConfirm('ท่านต้องการยืนยันการปฏิเสธการรับ Refer ผู้ป่วยที่เลือกนี้ ใช่หรือไม่.', { title: [titleModal], size: 'md', okVariant: 'danger', okTitle: 'ใช่', cancelTitle: 'ยกเลิก' }).then((value) => {
+      //   if (value) {
+      //     this.axios.put(`tcb/refers/${this.refer_id}`, { status: 3 }).then(() => {
+      //       this.$toast.success('ยืนยันการปฏิเสธการรับ Refer เรียบร้อย.')
+      //       this.$nextTick(() => {
+      //         this.$parent.loadItems()
+      //         this.$bvModal.hide('modal-refer-form-detail')
+      //       })
+      //     })
+      //   }
+      // })
     },
-    receiveRefer() {
-      // รับ Refer
-      const h = this.$createElement
-      const titleModal = h('div', { domProps: { innerHTML: '<i class="fa fa-plus"></i> ยืนยันการรับ Refer' } })
-      this.$bvModal.msgBoxConfirm('ท่านต้องการยืนยันการรับ Refer ผู้ป่วยที่เลือกนี้ ใช่หรือไม่.', { title: [titleModal], size: 'md', okVariant: 'success', okTitle: 'ใช่', cancelTitle: 'ยกเลิก' }).then((value) => {
-        if (value) {
-          this.axios.put(`tcb/refers/${this.refer_id}`, { status: 2 }).then(() => {
-            this.$toast.success('ยืนยันการรับ Refer เรียบร้อย.')
-            this.$nextTick(() => {
-              this.$parent.loadItems()
-              this.$bvModal.hide('modal-refer-form-detail')
-            })
-          })
-        }
+    referReceive() {
+      this.$bvModal.hide('modal-refer-form-detail')
+      this.$nextTick(() => {
+        this.$parent.showReferFormReceive(this.patient_id, this.refer_id)
       })
+
+      // รับ Refer
+      // const h = this.$createElement
+      // const titleModal = h('div', { domProps: { innerHTML: '<i class="fa fa-plus"></i> ยืนยันการรับ Refer' } })
+      // this.$bvModal.msgBoxConfirm('ท่านต้องการยืนยันการรับ Refer ผู้ป่วยที่เลือกนี้ ใช่หรือไม่.', { title: [titleModal], size: 'md', okVariant: 'success', okTitle: 'ใช่', cancelTitle: 'ยกเลิก' }).then((value) => {
+      //   if (value) {
+      //     this.axios.put(`tcb/refers/${this.refer_id}`, { status: 2 }).then(() => {
+      //       this.$toast.success('ยืนยันการรับ Refer เรียบร้อย.')
+      //       this.$nextTick(() => {
+      //         this.$parent.loadItems()
+      //         this.$bvModal.hide('modal-refer-form-detail')
+      //       })
+      //     })
+      //   }
+      // })
     },
     showForm(patient_id, refer_id) {
       this.patient_id = patient_id
@@ -636,7 +591,12 @@ export default {
 }
 </script>
 
-<style scoped>
+<style scope>
+.topiclabel {
+  color: rgb(8, 88, 8);
+  font-weight: bolder;
+  text-align: right;
+}
 .min-w-200px {
   min-width: 200px;
 }

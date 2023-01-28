@@ -5,143 +5,166 @@
       <validation-observer tag="form" ref="formsum">
         <form @submit.stop.prevent="handleSubmit">
           <b-container fluid no-padding>
-            <b-table-simple fixed responsive bordered>
+            <b-table-simple fixed responsive bordered small>
               <b-thead>
                 <b-tr class="align-middle text-center">
-                  <b-th class="w-150px" sticky-column variant="info">รายการ</b-th>
-                  <b-th class="w-300px">สรุปโรคมะเร็งครั้งปัจจุบัน</b-th>
-                  <b-th class="w-200px" v-show="old_cancer.diagnosis_date != null">สรุปโรคมะเร็งครั้งที่แล้ว<br />โดยทะเบียนมะเร็ง</b-th>
-                  <b-th class="w-200px" v-for="cancer in cancers" :key="cancer.id">รายละเอียดโรคมะเร็ง</b-th>
+                  <b-th class="w-450px" sticky-column variant="info">สรุปรายการโรคมะเร็งครั้งปัจจุบัน</b-th>
+                  <b-th class="w-200px pt-10px" v-show="old_cancer.diagnosis_date != null">สรุปโรคมะเร็งครั้งที่แล้ว<br />โดยทะเบียนมะเร็ง</b-th>
+                  <b-th class="w-200px pt-10px" v-for="cancer in cancers" :key="cancer.id">รายละเอียดโรคมะเร็ง</b-th>
+                  <b-th></b-th>
                 </b-tr>
               </b-thead>
               <b-tbody>
                 <b-tr>
-                  <b-td class="w-150px fw-bold" sticky-column variant="info">25. วันที่เข้ารับบริการ</b-td>
-                  <b-td class="w-300px"></b-td>
-                  <b-td class="w-200px" v-show="old_cancer.entrance_date != null"></b-td>
-                  <b-td class="w-200px" v-for="cancer in cancers" :key="cancer.id">{{ cancer.entrance_date | moment('add', '543 years', 'DD/MM/YYYY') }}</b-td>
+                  <b-td class="w-450px fw-bold" sticky-column variant="info">25. วันที่เข้ารับบริการ</b-td>
+                  <b-td class="w-200px pt-10px" v-show="old_cancer.diagnosis_date != null"></b-td>
+                  <b-td class="w-200px pt-10px" v-for="cancer in cancers" :key="cancer.id">{{ cancer.entrance_date | moment('add', '543 years', 'DD/MM/YYYY') }}</b-td>
+                  <b-td></b-td>
                 </b-tr>
                 <b-tr>
-                  <b-td class="w-150px fw-bold" sticky-column variant="info">26. สิทธิการรักษา</b-td>
-                  <b-td class="w-300px text-nowrap p-1">
-                    <validation-provider :rules="{ required: true }" name="finance_support_text">
-                      <b-form-group slot-scope="{ valid, errors }">
-                        <b-form-input plain list="finance-support-list" v-model="curr_cancer.finance_support_text" :state="errors[0] ? false : valid ? true : null"></b-form-input>
-                        <datalist id="finance-support-list">
-                          <option v-for="(value, key) in finance_support_list" :key="key">{{ value }}</option>
-                        </datalist>
-                      </b-form-group>
-                    </validation-provider>
+                  <b-td class="w-450px fw-bold" sticky-column variant="info">
+                    <div class="box-label">26. สิทธิการรักษา</div>
+                    <div class="box-input">
+                      <validation-provider :rules="{ required: true }" name="finance_support_text">
+                        <b-form-group slot-scope="{ valid, errors }">
+                          <b-form-input plain list="finance-support-list" v-model="curr_cancer.finance_support_text" :state="errors[0] ? false : valid ? true : null"></b-form-input>
+                          <datalist id="finance-support-list">
+                            <option v-for="(value, key) in finance_support_list" :key="key">{{ value }}</option>
+                          </datalist>
+                        </b-form-group>
+                      </validation-provider>
+                    </div>
                   </b-td>
-                  <b-td class="w-200px" v-show="old_cancer.diagnosis_date != null">
+                  <b-td class="w-200px pt-10px" v-show="old_cancer.diagnosis_date != null">
                     <a href="#" @click.stop.prevent="(e) => (curr_cancer.finance_support_text = e.target.innerHTML)">{{ old_cancer.finance_support_text }}</a>
                   </b-td>
-                  <b-td class="w-200px" v-for="cancer in cancers" :key="cancer.id">
+                  <b-td class="w-200px pt-10px" v-for="cancer in cancers" :key="cancer.id">
                     <a href="#" @click.stop.prevent="(e) => (curr_cancer.finance_support_text = e.target.innerHTML)">{{ cancer.finance_support_text }}</a>
                   </b-td>
+                  <b-td></b-td>
                 </b-tr>
                 <b-tr>
-                  <b-td class="w-150px fw-bold" sticky-column variant="info">27. วันที่วินิจฉัย</b-td>
-                  <b-td class="w-300px text-nowrap p-1">
-                    <validation-provider rules="required|date_format_th" name="diagnosis_date">
-                      <b-form-group slot-scope="{ valid, errors }">
-                        <masked-input autocomplete="off" pattern="11/11/1111" :class="'form-control ' + (errors[0] ? 'is-invalid' : valid ? 'is-valid' : '')" v-model="curr_cancer.diagnosis_date" :state="errors[0] ? false : valid ? true : null"></masked-input>
-                      </b-form-group>
-                    </validation-provider>
+                  <b-td class="w-450px fw-bold" sticky-column variant="info">
+                    <div class="box-label">27. วันที่วินิจฉัย</div>
+                    <div class="box-input">
+                      <validation-provider rules="required|date_format_th" name="diagnosis_date">
+                        <b-form-group slot-scope="{ valid, errors }">
+                          <masked-input autocomplete="off" pattern="11/11/1111" :class="'form-control ' + (errors[0] ? 'is-invalid' : valid ? 'is-valid' : '')" v-model="curr_cancer.diagnosis_date" :state="errors[0] ? false : valid ? true : null"></masked-input>
+                        </b-form-group>
+                      </validation-provider>
+                    </div>
                   </b-td>
-                  <b-td class="w-200px" v-show="old_cancer.diagnosis_date != null">
+                  <b-td class="w-200px pt-10px" v-show="old_cancer.diagnosis_date != null">
                     <a href="#" @click.stop.prevent="(e) => (curr_cancer.diagnosis_date = e.target.innerHTML)">{{ old_cancer.diagnosis_date | moment('add', '543 years', 'DD/MM/YYYY') }}</a>
                   </b-td>
-                  <b-td class="w-200px" v-for="cancer in cancers" :key="cancer.id">
+                  <b-td class="w-200px pt-10px" v-for="cancer in cancers" :key="cancer.id">
                     <a href="#" @click.stop.prevent="(e) => (curr_cancer.diagnosis_date = e.target.innerHTML)">{{ cancer.diagnosis_date | moment('add', '543 years', 'DD/MM/YYYY') }}</a>
                   </b-td>
+                  <b-td></b-td>
                 </b-tr>
                 <b-tr>
-                  <b-td class="w-150px fw-bold" sticky-column variant="info">28. วิธีวินิจฉัย</b-td>
-                  <b-td class="w-300px text-nowrap p-1">
-                    <validation-provider :rules="{ required: true }" name="diagnosis_text">
-                      <b-form-group slot-scope="{ valid, errors }">
-                        <b-form-input plain list="diagnosis-list" v-model="curr_cancer.diagnosis_text" :state="errors[0] ? false : valid ? true : null"></b-form-input>
-                        <datalist id="diagnosis-list">
-                          <option v-for="(value, key) in diagnosis_list" :key="key">{{ value }}</option>
-                        </datalist>
-                      </b-form-group>
-                    </validation-provider>
+                  <b-td class="w-450px fw-bold" sticky-column variant="info">
+                    <div class="box-label">28. วิธีวินิจฉัย</div>
+                    <div class="box-input">
+                      <validation-provider :rules="{ required: true }" name="diagnosis_text">
+                        <b-form-group slot-scope="{ valid, errors }">
+                          <b-form-input plain list="diagnosis-list" v-model="curr_cancer.diagnosis_text" :state="errors[0] ? false : valid ? true : null"></b-form-input>
+                          <datalist id="diagnosis-list">
+                            <option v-for="(value, key) in diagnosis_list" :key="key">{{ value }}</option>
+                          </datalist>
+                        </b-form-group>
+                      </validation-provider>
+                    </div>
                   </b-td>
-                  <b-td class="w-200px" v-show="old_cancer.diagnosis_date != null">
+                  <b-td class="w-200px pt-10px" v-show="old_cancer.diagnosis_date != null">
                     <a href="#" @click.stop.prevent="(e) => (curr_cancer.diagnosis_text = e.target.innerHTML)">{{ old_cancer.diagnosis_text }}</a>
                   </b-td>
-                  <b-td class="w-200px" v-for="cancer in cancers" :key="cancer.id">
+                  <b-td class="w-200px pt-10px" v-for="cancer in cancers" :key="cancer.id">
                     <a href="#" @click.stop.prevent="(e) => (curr_cancer.diagnosis_text = e.target.innerHTML)">{{ cancer.diagnosis_text }}</a>
                   </b-td>
+                  <b-td></b-td>
                 </b-tr>
                 <b-tr>
-                  <b-td class="w-150px fw-bold" sticky-column variant="info">29. วินิจฉัยนอก รพ</b-td>
-                  <b-td class="w-300px text-nowrap p-2">
-                    <b-form-checkbox plain v-model="curr_cancer.diagnosis_out" value="1" unchecked-value="0"><span> วินิจฉัยนอก รพ</span> </b-form-checkbox>
+                  <b-td class="w-450px fw-bold" sticky-column variant="info">
+                    <div class="box-label">29. วินิจฉัยนอก รพ</div>
+                    <div class="box-input pt-5px">
+                      <b-form-checkbox plain v-model="curr_cancer.diagnosis_out" value="1" unchecked-value="0"><span> วินิจฉัยนอก รพ</span> </b-form-checkbox>
+                    </div>
                   </b-td>
-                  <b-td class="w-200px" v-show="old_cancer.diagnosis_date != null">
+                  <b-td class="w-200px pt-10px" v-show="old_cancer.diagnosis_date != null">
                     <b-form-checkbox plain v-model="old_cancer.diagnosis_out" value="1" unchecked-value="0" disabled><span> วินิจฉัยนอก รพ</span> </b-form-checkbox>
                   </b-td>
                   <b-td class="w-200px text-nowrap p-2" v-for="cancer in cancers" :key="cancer.id">
                     <b-form-checkbox plain v-model="cancer.diagnosis_out" value="1" unchecked-value="0" disabled><span> วินิจฉัยนอก รพ</span> </b-form-checkbox>
                   </b-td>
+                  <b-td></b-td>
                 </b-tr>
                 <b-tr>
-                  <b-td class="w-150px fw-bold" sticky-column variant="info">30. วันที่ตัดชิ้นเนื้อ</b-td>
-                  <b-td class="w-300px text-nowrap p-1">
-                    <validation-provider rules="date_format_th" name="excision_in_cut_date">
-                      <b-form-group slot-scope="{ valid, errors }">
-                        <masked-input autocomplete="off" pattern="11/11/1111" :class="'form-control ' + (errors[0] ? 'is-invalid' : valid ? 'is-valid' : '')" v-model="curr_cancer.excision_in_cut_date" :state="errors[0] ? false : valid ? true : null"></masked-input>
-                      </b-form-group>
-                    </validation-provider>
+                  <b-td class="w-450px fw-bold" sticky-column variant="info">
+                    <div class="box-label">30. วันที่ตัดชิ้นเนื้อ</div>
+                    <div class="box-input">
+                      <validation-provider rules="date_format_th" name="excision_in_cut_date">
+                        <b-form-group slot-scope="{ valid, errors }">
+                          <masked-input autocomplete="off" pattern="11/11/1111" :class="'form-control ' + (errors[0] ? 'is-invalid' : valid ? 'is-valid' : '')" v-model="curr_cancer.excision_in_cut_date" :state="errors[0] ? false : valid ? true : null"></masked-input>
+                        </b-form-group>
+                      </validation-provider>
+                    </div>
                   </b-td>
-                  <b-td class="w-200px" v-show="old_cancer.diagnosis_date != null">
+                  <b-td class="w-200px pt-10px" v-show="old_cancer.diagnosis_date != null">
                     <a href="#" @click.stop.prevent="(e) => (curr_cancer.excision_in_cut_date = e.target.innerHTML)">{{ old_cancer.excision_in_cut_date | moment('add', '543 years', 'DD/MM/YYYY') }}</a>
                   </b-td>
-                  <b-td class="w-200px" v-for="cancer in cancers" :key="cancer.id">
+                  <b-td class="w-200px pt-10px" v-for="cancer in cancers" :key="cancer.id">
                     <a href="#" @click.stop.prevent="(e) => (curr_cancer.excision_in_cut_date = e.target.innerHTML)">{{ cancer.excision_in_cut_date | moment('add', '543 years', 'DD/MM/YYYY') }}</a>
                   </b-td>
+                  <b-td></b-td>
                 </b-tr>
                 <b-tr>
-                  <b-td class="w-150px fw-bold" sticky-column variant="info">31. วันที่อ่านชิ้นเนื้อ</b-td>
-                  <b-td class="w-300px text-nowrap p-1">
-                    <validation-provider rules="date_format_th" name="excision_in_read_date">
-                      <b-form-group slot-scope="{ valid, errors }">
-                        <masked-input autocomplete="off" pattern="11/11/1111" :class="'form-control ' + (errors[0] ? 'is-invalid' : valid ? 'is-valid' : '')" v-model="curr_cancer.excision_in_read_date" :state="errors[0] ? false : valid ? true : null"></masked-input>
-                      </b-form-group>
-                    </validation-provider>
+                  <b-td class="w-450px fw-bold" sticky-column variant="info">
+                    <div class="box-label">31. วันที่อ่านชิ้นเนื้อ</div>
+                    <div class="box-input">
+                      <validation-provider rules="date_format_th" name="excision_in_read_date">
+                        <b-form-group slot-scope="{ valid, errors }">
+                          <masked-input autocomplete="off" pattern="11/11/1111" :class="'form-control ' + (errors[0] ? 'is-invalid' : valid ? 'is-valid' : '')" v-model="curr_cancer.excision_in_read_date" :state="errors[0] ? false : valid ? true : null"></masked-input>
+                        </b-form-group>
+                      </validation-provider>
+                    </div>
                   </b-td>
-                  <b-td class="w-200px" v-show="old_cancer.diagnosis_date != null">
+                  <b-td class="w-200px pt-10px" v-show="old_cancer.diagnosis_date != null">
                     <a href="#" @click.stop.prevent="(e) => (curr_cancer.excision_in_read_date = e.target.innerHTML)">{{ old_cancer.excision_in_read_date | moment('add', '543 years', 'DD/MM/YYYY') }}</a>
                   </b-td>
-                  <b-td class="w-200px" v-for="cancer in cancers" :key="cancer.id">
+                  <b-td class="w-200px pt-10px" v-for="cancer in cancers" :key="cancer.id">
                     <a href="#" @click.stop.prevent="(e) => (curr_cancer.excision_in_read_date = e.target.innerHTML)">{{ cancer.excision_in_read_date | moment('add', '543 years', 'DD/MM/YYYY') }}</a>
                   </b-td>
+                  <b-td></b-td>
                 </b-tr>
                 <b-tr>
-                  <b-td class="w-150px fw-bold" sticky-column variant="info">32. Topography</b-td>
-                  <b-td class="w-300px text-nowrap p-1">
-                    <validation-provider :rules="{ required: true }" name="topo_text">
-                      <b-form-group slot-scope="{ valid, errors }">
-                        <b-form-input plain list="topo-list" v-model="curr_cancer.topo_text" :state="errors[0] ? false : valid ? true : null"></b-form-input>
-                        <datalist id="topo-list">
-                          <option v-for="(value, key) in topo_list" :key="key">{{ value }}</option>
-                        </datalist>
-                      </b-form-group>
-                    </validation-provider>
+                  <b-td class="w-450px fw-bold" sticky-column variant="info">
+                    <div class="box-label">32. Topography</div>
+                    <div class="box-input">
+                      <validation-provider :rules="{ required: true }" name="topo_text">
+                        <b-form-group slot-scope="{ valid, errors }">
+                          <b-form-input plain list="topo-list" v-model="curr_cancer.topo_text" :state="errors[0] ? false : valid ? true : null"></b-form-input>
+                          <datalist id="topo-list">
+                            <option v-for="(value, key) in topo_list" :key="key">{{ value }}</option>
+                          </datalist>
+                        </b-form-group>
+                      </validation-provider>
+                    </div>
                   </b-td>
-                  <b-td class="w-200px" v-show="old_cancer.diagnosis_date != null">
+                  <b-td class="w-200px pt-10px" v-show="old_cancer.diagnosis_date != null">
                     <a href="#" @click.stop.prevent="(e) => (curr_cancer.topo_text = e.target.innerHTML)">{{ old_cancer.topo_text }}</a>
                   </b-td>
-                  <b-td class="w-200px" v-for="cancer in cancers" :key="cancer.id">
+                  <b-td class="w-200px pt-10px" v-for="cancer in cancers" :key="cancer.id">
                     <a href="#" @click.stop.prevent="(e) => (curr_cancer.topo_text = e.target.innerHTML)">{{ cancer.topo_text }}</a>
                   </b-td>
+                  <b-td></b-td>
                 </b-tr>
                 <b-tr>
-                  <b-td class="w-150px fw-bold" sticky-column variant="info">33. Recurrent</b-td>
-                  <b-td class="w-300px text-nowrap p-2">
-                    <b-form-checkbox plain v-model="curr_cancer.recurrent" value="1" unchecked-value="0"><span> Recurrent</span> </b-form-checkbox>
+                  <b-td class="w-450px fw-bold" sticky-column variant="info">
+                    <div class="box-label">33. Recurrent</div>
+                    <div class="box-input pt-5px">
+                      <b-form-checkbox plain v-model="curr_cancer.recurrent" value="1" unchecked-value="0"><span> Recurrent</span> </b-form-checkbox>
+                    </div>
                   </b-td>
                   <b-td class="w-200px text-nowrap p-2" v-show="old_cancer.diagnosis_date != null">
                     <b-form-checkbox plain v-model="old_cancer.recurrent" value="1" unchecked-value="0" disabled><span> Recurrent</span> </b-form-checkbox>
@@ -149,102 +172,117 @@
                   <b-td class="w-200px text-nowrap p-2" v-for="cancer in cancers" :key="cancer.id">
                     <b-form-checkbox plain v-model="cancer.recurrent" value="1" unchecked-value="0" disabled><span> Recurrent</span> </b-form-checkbox>
                   </b-td>
+                  <b-td></b-td>
                 </b-tr>
                 <b-tr>
-                  <b-td class="w-150px fw-bold" sticky-column variant="info">34. วันที่ Recurrent</b-td>
-                  <b-td class="w-300px text-nowrap p-1">
-                    <validation-provider :rules="{ required: curr_cancer.recurrent == 1 ? true : false }" name="recurrent_date">
-                      <b-form-group slot-scope="{ valid, errors }">
-                        <masked-input autocomplete="off" pattern="11/11/1111" :class="'form-control ' + (errors[0] ? 'is-invalid' : valid ? 'is-valid' : '')" v-model="curr_cancer.recurrent_date" :disabled="curr_cancer.recurrent == 1 ? false : true" :state="errors[0] ? false : valid ? true : null"></masked-input>
-                      </b-form-group>
-                    </validation-provider>
+                  <b-td class="w-450px fw-bold" sticky-column variant="info">
+                    <div class="box-label">34. วันที่ Recurrent</div>
+                    <div class="box-input">
+                      <validation-provider :rules="{ required: curr_cancer.recurrent == 1 ? true : false, date_format_th: true }" name="recurrent_date">
+                        <b-form-group slot-scope="{ valid, errors }">
+                          <masked-input autocomplete="off" pattern="11/11/1111" :class="'form-control ' + (errors[0] ? 'is-invalid' : valid ? 'is-valid' : '')" v-model="curr_cancer.recurrent_date" :disabled="curr_cancer.recurrent == 1 ? false : true" :state="errors[0] ? false : valid ? true : null"></masked-input>
+                        </b-form-group>
+                      </validation-provider>
+                    </div>
                   </b-td>
-                  <b-td class="w-200px" v-show="old_cancer.diagnosis_date != null">
+                  <b-td class="w-200px pt-10px" v-show="old_cancer.diagnosis_date != null">
                     <a href="#" @click.stop.prevent="(e) => (curr_cancer.recurrent_date = e.target.innerHTML)">{{ old_cancer.recurrent_date | moment('add', '543 years', 'DD/MM/YYYY') }}</a>
                   </b-td>
-                  <b-td class="w-200px" v-for="cancer in cancers" :key="cancer.id">
+                  <b-td class="w-200px pt-10px" v-for="cancer in cancers" :key="cancer.id">
                     <a href="#" @click.stop.prevent="(e) => (curr_cancer.recurrent_date = e.target.innerHTML)">{{ cancer.recurrent_date | moment('add', '543 years', 'DD/MM/YYYY') }}</a>
                   </b-td>
+                  <b-td></b-td>
                 </b-tr>
                 <b-tr>
-                  <b-td class="w-150px fw-bold" sticky-column variant="info">35. Morphology</b-td>
-                  <b-td class="w-300px text-nowrap p-1">
-                    <validation-provider :rules="{ required: true }" name="morphology_text">
-                      <b-form-group slot-scope="{ valid, errors }">
-                        <b-form-input plain list="morphology-list" v-model="curr_cancer.morphology_text" :state="errors[0] ? false : valid ? true : null"></b-form-input>
-                        <datalist id="morphology-list">
-                          <option v-for="(value, key) in morphology_list" :key="key">{{ value }}</option>
-                        </datalist>
-                      </b-form-group>
-                    </validation-provider>
+                  <b-td class="w-450px fw-bold" sticky-column variant="info">
+                    <div class="box-label">35. Morphology</div>
+                    <div class="box-input">
+                      <validation-provider :rules="{ required: true }" name="morphology_text">
+                        <b-form-group slot-scope="{ valid, errors }">
+                          <b-form-input plain list="morphology-list" v-model="curr_cancer.morphology_text" :state="errors[0] ? false : valid ? true : null"></b-form-input>
+                          <datalist id="morphology-list">
+                            <option v-for="(value, key) in morphology_list" :key="key">{{ value }}</option>
+                          </datalist>
+                        </b-form-group>
+                      </validation-provider>
+                    </div>
                   </b-td>
-                  <b-td class="w-200px" v-show="old_cancer.diagnosis_date != null">
+                  <b-td class="w-200px pt-10px" v-show="old_cancer.diagnosis_date != null">
                     <a href="#" @click.stop.prevent="(e) => (curr_cancer.morphology_text = e.target.innerHTML)">{{ old_cancer.morphology_text }}</a>
                   </b-td>
-                  <b-td class="w-200px" v-for="cancer in cancers" :key="cancer.id">
+                  <b-td class="w-200px pt-10px" v-for="cancer in cancers" :key="cancer.id">
                     <a href="#" @click.stop.prevent="(e) => (curr_cancer.morphology_text = e.target.innerHTML)">{{ cancer.morphology_text }}</a>
                   </b-td>
+                  <b-td></b-td>
                 </b-tr>
                 <b-tr>
-                  <b-td class="w-150px fw-bold" sticky-column variant="info">36. Behaviour</b-td>
-                  <b-td class="w-300px text-nowrap p-1">
-                    <validation-provider :rules="{ required: true }" name="behaviour_text">
-                      <b-form-group slot-scope="{ valid, errors }">
-                        <b-form-input plain list="behaviour-list" v-model="curr_cancer.behaviour_text" :state="errors[0] ? false : valid ? true : null"></b-form-input>
-                        <datalist id="behaviour-list">
-                          <option v-for="(value, key) in behaviour_list" :key="key">{{ value }}</option>
-                        </datalist>
-                      </b-form-group>
-                    </validation-provider>
+                  <b-td class="w-450px fw-bold" sticky-column variant="info">
+                    <div class="box-label">36. Behaviour</div>
+                    <div class="box-input">
+                      <validation-provider :rules="{ required: true }" name="behaviour_text">
+                        <b-form-group slot-scope="{ valid, errors }">
+                          <b-form-input plain list="behaviour-list" v-model="curr_cancer.behaviour_text" :state="errors[0] ? false : valid ? true : null"></b-form-input>
+                          <datalist id="behaviour-list">
+                            <option v-for="(value, key) in behaviour_list" :key="key">{{ value }}</option>
+                          </datalist>
+                        </b-form-group>
+                      </validation-provider>
+                    </div>
                   </b-td>
-                  <b-td class="w-200px" v-show="old_cancer.diagnosis_date != null">
+                  <b-td class="w-200px pt-10px" v-show="old_cancer.diagnosis_date != null">
                     <a href="#" @click.stop.prevent="(e) => (curr_cancer.behaviour_text = e.target.innerHTML)">{{ old_cancer.behaviour_text }}</a>
                   </b-td>
-                  <b-td class="w-200px" v-for="cancer in cancers" :key="cancer.id">
+                  <b-td class="w-200px pt-10px" v-for="cancer in cancers" :key="cancer.id">
                     <a href="#" @click.stop.prevent="(e) => (curr_cancer.behaviour_text = e.target.innerHTML)">{{ cancer.behaviour_text }}</a>
                   </b-td>
+                  <b-td></b-td>
                 </b-tr>
                 <b-tr>
-                  <b-td class="w-150px fw-bold" sticky-column variant="info">37. Grade</b-td>
-                  <b-td class="w-300px text-nowrap p-1">
-                    <validation-provider :rules="{ required: true }" name="grade_text">
-                      <b-form-group slot-scope="{ valid, errors }">
-                        <b-form-input plain list="grade-list" v-model="curr_cancer.grade_text" :state="errors[0] ? false : valid ? true : null"></b-form-input>
-                        <datalist id="grade-list">
-                          <option v-for="(value, key) in grade_list" :key="key">{{ value }}</option>
-                        </datalist>
-                      </b-form-group>
-                    </validation-provider>
+                  <b-td class="w-450px fw-bold" sticky-column variant="info">
+                    <div class="box-label">37. Grade</div>
+                    <div class="box-input">
+                      <validation-provider :rules="{ required: true }" name="grade_text">
+                        <b-form-group slot-scope="{ valid, errors }">
+                          <b-form-input plain list="grade-list" v-model="curr_cancer.grade_text" :state="errors[0] ? false : valid ? true : null"></b-form-input>
+                          <datalist id="grade-list">
+                            <option v-for="(value, key) in grade_list" :key="key">{{ value }}</option>
+                          </datalist>
+                        </b-form-group>
+                      </validation-provider>
+                    </div>
                   </b-td>
-                  <b-td class="w-200px" v-show="old_cancer.diagnosis_date != null">
+                  <b-td class="w-200px pt-10px" v-show="old_cancer.diagnosis_date != null">
                     <a href="#" @click.stop.prevent="(e) => (curr_cancer.grade_text = e.target.innerHTML)">{{ old_cancer.grade_text }}</a>
                   </b-td>
-                  <b-td class="w-200px" v-for="cancer in cancers" :key="cancer.id">
+                  <b-td class="w-200px pt-10px" v-for="cancer in cancers" :key="cancer.id">
                     <a href="#" @click.stop.prevent="(e) => (curr_cancer.grade_text = e.target.innerHTML)">{{ cancer.grade_text }}</a>
                   </b-td>
+                  <b-td></b-td>
                 </b-tr>
                 <b-tr>
-                  <b-td class="w-150px fw-bold" sticky-column variant="info">38. T-N-M</b-td>
-                  <b-td class="w-300px text-nowrap p-1">
-                    <b-row class="p-0">
-                      <b-col>
-                        <b-form-group>
-                          <b-form-select :select-size="1" id="input-t" class="form-select" plain v-model="curr_cancer.t_code" :options="t_list"></b-form-select>
-                        </b-form-group>
-                      </b-col>
-                      <b-col>
-                        <b-form-group>
-                          <b-form-select :select-size="1" id="input-n" class="form-select" plain v-model="curr_cancer.n_code" :options="n_list"></b-form-select>
-                        </b-form-group>
-                      </b-col>
-                      <b-col>
-                        <b-form-group>
-                          <b-form-select :select-size="1" id="input-m" class="form-select" plain v-model="curr_cancer.m_code" :options="m_list"></b-form-select>
-                        </b-form-group>
-                      </b-col>
-                    </b-row>
+                  <b-td class="w-450px fw-bold" sticky-column variant="info">
+                    <div class="box-label">38. T-N-M</div>
+                    <div class="box-input">
+                      <b-row class="p-0">
+                        <b-col>
+                          <b-form-group>
+                            <b-form-select :select-size="1" id="input-t" class="form-select" plain v-model="curr_cancer.t_code" :options="t_list"></b-form-select>
+                          </b-form-group>
+                        </b-col>
+                        <b-col>
+                          <b-form-group>
+                            <b-form-select :select-size="1" id="input-n" class="form-select" plain v-model="curr_cancer.n_code" :options="n_list"></b-form-select>
+                          </b-form-group>
+                        </b-col>
+                        <b-col>
+                          <b-form-group>
+                            <b-form-select :select-size="1" id="input-m" class="form-select" plain v-model="curr_cancer.m_code" :options="m_list"></b-form-select>
+                          </b-form-group>
+                        </b-col>
+                      </b-row>
+                    </div>
                   </b-td>
-                  <b-td class="w-200px" v-show="old_cancer.diagnosis_date != null">
+                  <b-td class="w-200px pt-10px" v-show="old_cancer.diagnosis_date != null">
                     <a
                       href="#"
                       @click.stop.prevent="
@@ -258,7 +296,7 @@
                       {{ t_list_arr[old_cancer.t_code] }} - {{ n_list_arr[old_cancer.n_code] }} - {{ m_list_arr[old_cancer.m_code] }}
                     </a>
                   </b-td>
-                  <b-td class="w-200px" v-for="(cancer, idx) in cancers" :key="cancer.id">
+                  <b-td class="w-200px pt-10px" v-for="(cancer, idx) in cancers" :key="cancer.id">
                     <a
                       href="#"
                       @click.stop.prevent="
@@ -272,141 +310,156 @@
                       {{ t_list_arr[cancer.t_code] }} - {{ n_list_arr[cancer.n_code] }} - {{ m_list_arr[cancer.m_code] }}
                     </a>
                   </b-td>
+                  <b-td></b-td>
                 </b-tr>
                 <b-tr>
-                  <b-td class="w-150px fw-bold" sticky-column variant="info">39. วันที่ TNM/Stage</b-td>
-                  <b-td class="w-300px text-nowrap p-1">
-                    <validation-provider rules="date_format_th" name="tnm_date">
-                      <b-form-group slot-scope="{ valid, errors }">
-                        <masked-input autocomplete="off" pattern="11/11/1111" :class="'form-control ' + (errors[0] ? 'is-invalid' : valid ? 'is-valid' : '')" v-model="curr_cancer.tnm_date" :state="errors[0] ? false : valid ? true : null"></masked-input>
-                      </b-form-group>
-                    </validation-provider>
+                  <b-td class="w-450px fw-bold" sticky-column variant="info">
+                    <div class="box-label">39. วันที่ TNM/Stage</div>
+                    <div class="box-input">
+                      <validation-provider rules="date_format_th" name="tnm_date">
+                        <b-form-group slot-scope="{ valid, errors }">
+                          <masked-input autocomplete="off" pattern="11/11/1111" :class="'form-control ' + (errors[0] ? 'is-invalid' : valid ? 'is-valid' : '')" v-model="curr_cancer.tnm_date" :state="errors[0] ? false : valid ? true : null"></masked-input>
+                        </b-form-group>
+                      </validation-provider>
+                    </div>
                   </b-td>
-                  <b-td class="w-200px" v-show="old_cancer.diagnosis_date != null">
+                  <b-td class="w-200px pt-10px" v-show="old_cancer.diagnosis_date != null">
                     <a href="#" @click.stop.prevent="(e) => (curr_cancer.tnm_date = e.target.innerHTML)">{{ old_cancer.tnm_date | moment('add', '543 years', 'DD/MM/YYYY') }}</a>
                   </b-td>
-                  <b-td class="w-200px" v-for="cancer in cancers" :key="cancer.id">
+                  <b-td class="w-200px pt-10px" v-for="cancer in cancers" :key="cancer.id">
                     <a href="#" @click.stop.prevent="(e) => (curr_cancer.tnm_date = e.target.innerHTML)">{{ cancer.tnm_date | moment('add', '543 years', 'DD/MM/YYYY') }}</a>
                   </b-td>
+                  <b-td></b-td>
                 </b-tr>
                 <b-tr>
-                  <b-td class="w-150px fw-bold" sticky-column variant="info">40. Stage</b-td>
-                  <b-td class="w-300px text-nowrap p-1">
-                    <validation-provider rules="required" name="stage_code">
-                      <b-form-group slot-scope="{ valid, errors }">
-                        <b-form-select :select-size="1" id="input-stage" class="form-select" plain v-model="curr_cancer.stage_code" :options="stage_list" :state="errors[0] ? false : valid ? true : null"></b-form-select>
-                      </b-form-group>
-                    </validation-provider>
+                  <b-td class="w-450px fw-bold" sticky-column variant="info">
+                    <div class="box-label">40. Stage</div>
+                    <div class="box-input">
+                      <validation-provider rules="required" name="stage_code">
+                        <b-form-group slot-scope="{ valid, errors }">
+                          <b-form-select :select-size="1" id="input-stage" class="form-select" plain v-model="curr_cancer.stage_code" :options="stage_list" :state="errors[0] ? false : valid ? true : null"></b-form-select>
+                        </b-form-group>
+                      </validation-provider>
+                    </div>
                   </b-td>
-                  <b-td class="w-200px" v-show="old_cancer.diagnosis_date != null">
+                  <b-td class="w-200px pt-10px" v-show="old_cancer.diagnosis_date != null">
                     <a href="#" @click.stop.prevent="() => (curr_cancer.stage_code = old_cancer.stage_code)">{{ stage_list_arr[old_cancer.stage_code] }}</a>
                   </b-td>
-                  <b-td class="w-200px" v-for="cancer in cancers" :key="cancer.id">
+                  <b-td class="w-200px pt-10px" v-for="cancer in cancers" :key="cancer.id">
                     <a href="#" @click.stop.prevent="() => (curr_cancer.stage_code = cancers[idx].stage_code)">{{ stage_list_arr[cancer.stage_code] }}</a>
                   </b-td>
+                  <b-td></b-td>
                 </b-tr>
                 <b-tr>
-                  <b-td class="w-150px fw-bold" sticky-column variant="info">41. Extend</b-td>
-                  <b-td class="w-300px text-nowrap p-1">
-                    <validation-provider rules="required" name="extension_code">
-                      <b-form-group slot-scope="{ valid, errors }">
-                        <b-form-select :select-size="1" id="input-stage" class="form-select" plain v-model="curr_cancer.extension_code" :options="extension_list" :state="errors[0] ? false : valid ? true : null"></b-form-select>
-                      </b-form-group>
-                    </validation-provider>
+                  <b-td class="w-450px fw-bold" sticky-column variant="info">
+                    <div class="box-label">41. Extend</div>
+                    <div class="box-input">
+                      <validation-provider rules="required" name="extension_code">
+                        <b-form-group slot-scope="{ valid, errors }">
+                          <b-form-select :select-size="1" id="input-stage" class="form-select" plain v-model="curr_cancer.extension_code" :options="extension_list" :state="errors[0] ? false : valid ? true : null"></b-form-select>
+                        </b-form-group>
+                      </validation-provider>
+                    </div>
                   </b-td>
-                  <b-td class="w-200px" v-show="old_cancer.diagnosis_date != null">
+                  <b-td class="w-200px pt-10px" v-show="old_cancer.diagnosis_date != null">
                     <a href="#" @click.stop.prevent="() => (curr_cancer.extension_code = old_cancer.extension_code)">{{ extension_list_arr[old_cancer.extension_code] }}</a>
                   </b-td>
-                  <b-td class="w-200px" v-for="cancer in cancers" :key="cancer.id">
+                  <b-td class="w-200px pt-10px" v-for="cancer in cancers" :key="cancer.id">
                     <a href="#" @click.stop.prevent="() => (curr_cancer.extension_code = cancers[idx].extension_code)">{{ extension_list_arr[cancer.extension_code] }}</a>
                   </b-td>
+                  <b-td></b-td>
                 </b-tr>
                 <b-tr>
-                  <b-td class="w-150px fw-bold" sticky-column variant="info">42. ICD-10</b-td>
-                  <b-td class="w-300px text-nowrap p-1">
-                    <validation-provider :rules="{ required: true }" name="icd10_code">
-                      <b-form-group slot-scope="{ valid, errors }">
-                        <b-form-input plain list="icd10-list" :disabled="icd10_disabled" v-model="curr_cancer.icd10_code" :state="errors[0] ? false : valid ? true : null"></b-form-input>
-                        <datalist id="icd10-list">
-                          <option v-for="(value, key) in icd10_list" :key="key">{{ value }}</option>
-                        </datalist>
-                      </b-form-group>
-                    </validation-provider>
+                  <b-td class="w-450px fw-bold" sticky-column variant="info">
+                    <div class="box-label">42. ICD-10</div>
+                    <div class="box-input">
+                      <validation-provider :rules="{ required: true }" name="icd10_code">
+                        <b-form-group slot-scope="{ valid, errors }">
+                          <b-form-input plain list="icd10-list" :disabled="icd10_disabled" v-model="curr_cancer.icd10_code" :state="errors[0] ? false : valid ? true : null"></b-form-input>
+                          <datalist id="icd10-list">
+                            <option v-for="(value, key) in icd10_list" :key="key">{{ value }}</option>
+                          </datalist>
+                        </b-form-group>
+                      </validation-provider>
+                    </div>
                   </b-td>
-                  <b-td class="w-200px" v-show="old_cancer.diagnosis_date != null">
-                    <a href="#" @click.stop.prevent="(e) => (curr_cancer.icd10_code = e.target.innerHTML)">{{ old_cancer.icd10_code }}</a>
+                  <b-td class="w-200px pt-10px" v-show="old_cancer.diagnosis_date != null">
+                    <a href="#" @click.stop.prevent="(e) => (curr_cancer.icd10_code = e.target.innerHTML)">{{ old_cancer.icd10_text }}</a>
                   </b-td>
-                  <b-td class="w-200px" v-for="cancer in cancers" :key="cancer.id">
-                    <a href="#" @click.stop.prevent="(e) => (curr_cancer.icd10_code = e.target.innerHTML)">{{ cancer.icd10_code }}</a>
+                  <b-td class="w-200px pt-10px" v-for="cancer in cancers" :key="cancer.id">
+                    <a href="#" @click.stop.prevent="(e) => (curr_cancer.icd10_code = e.target.innerHTML)">{{ cancer.icd10_text }}</a>
                   </b-td>
+                  <b-td></b-td>
                 </b-tr>
                 <b-tr>
-                  <b-td class="w-150px fw-bold" sticky-column variant="info">43. Metastasis</b-td>
-                  <b-td class="w-300px text-nowrap pt-1px pb-1px">
-                    <b-row>
-                      <b-col sm="8" md="8" lg="6" xl="6" class="mt-2">
-                        <b-form-checkbox plain v-model="curr_cancer.met_1" value="1" unchecked-value="0"> Bone</b-form-checkbox>
-                      </b-col>
-                      <b-col sm="8" md="8" lg="6" xl="6" class="pb-1">
-                        <b-form-input type="text" v-model="curr_cancer.met_1_date"></b-form-input>
-                      </b-col>
-                    </b-row>
-                    <b-row>
-                      <b-col sm="8" md="8" lg="6" xl="6" class="mt-2">
-                        <b-form-checkbox plain v-model="curr_cancer.met_2" value="1" unchecked-value="0"> Brain</b-form-checkbox>
-                      </b-col>
-                      <b-col sm="8" md="8" lg="6" xl="6" class="pb-1">
-                        <b-form-input type="text" v-model="curr_cancer.met_2_date"></b-form-input>
-                      </b-col>
-                    </b-row>
-                    <b-row>
-                      <b-col sm="8" md="8" lg="6" xl="6" class="mt-2">
-                        <b-form-checkbox plain v-model="curr_cancer.met_3" value="1" unchecked-value="0"> Liver</b-form-checkbox>
-                      </b-col>
-                      <b-col sm="8" md="8" lg="6" xl="6" class="pb-1">
-                        <b-form-input type="text" v-model="curr_cancer.met_3_date"></b-form-input>
-                      </b-col>
-                    </b-row>
-                    <b-row>
-                      <b-col sm="8" md="8" lg="6" xl="6" class="mt-2">
-                        <b-form-checkbox plain v-model="curr_cancer.met_4" value="1" unchecked-value="0"> Lung</b-form-checkbox>
-                      </b-col>
-                      <b-col sm="8" md="8" lg="6" xl="6" class="pb-1">
-                        <b-form-input type="text" v-model="curr_cancer.met_4_date"></b-form-input>
-                      </b-col>
-                    </b-row>
-                    <b-row>
-                      <b-col sm="8" md="8" lg="6" xl="6" class="mt-2">
-                        <b-form-checkbox plain v-model="curr_cancer.met_5" value="1" unchecked-value="0"> Lymph Node</b-form-checkbox>
-                      </b-col>
-                      <b-col sm="8" md="8" lg="6" xl="6" class="pb-1">
-                        <b-form-input type="text" v-model="curr_cancer.met_5_date"></b-form-input>
-                      </b-col>
-                    </b-row>
-                    <b-row>
-                      <b-col sm="8" md="8" lg="6" xl="6" class="mt-2">
-                        <b-form-checkbox plain v-model="curr_cancer.met_6" value="1" unchecked-value="0"> Peritoneum</b-form-checkbox>
-                      </b-col>
-                      <b-col sm="8" md="8" lg="6" xl="6" class="pb-1">
-                        <b-form-input type="text" v-model="curr_cancer.met_6_date"></b-form-input>
-                      </b-col>
-                    </b-row>
-                    <b-row>
-                      <b-col sm="8" md="8" lg="6" xl="6" class="mt-2">
-                        <b-form-checkbox plain v-model="curr_cancer.met_7" value="1" unchecked-value="0"> Other</b-form-checkbox>
-                      </b-col>
-                      <b-col sm="8" md="8" lg="6" xl="6" class="pb-1">
-                        <b-form-input type="text" v-model="curr_cancer.met_7_date"></b-form-input>
-                      </b-col>
-                      <b-col sm="4" md="4" lg="3" xl="3" class="mt-2">
-                        <label>ระบุ:</label>
-                      </b-col>
-                      <b-col sm="8" md="8" lg="9" xl="9">
-                        <b-form-input type="text" v-model="curr_cancer.met_7_other"></b-form-input>
-                      </b-col>
-                    </b-row>
+                  <b-td class="w-450px fw-bold" sticky-column variant="info">
+                    <div class="box-label">43. Metastasis</div>
+                    <div class="box-input">
+                      <b-row>
+                        <b-col sm="8" md="8" lg="6" xl="6" class="mt-2">
+                          <b-form-checkbox plain v-model="curr_cancer.met_1" value="1" unchecked-value="0"> Bone</b-form-checkbox>
+                        </b-col>
+                        <b-col sm="8" md="8" lg="6" xl="6" class="pb-1">
+                          <b-form-input type="text" v-model="curr_cancer.met_1_date"></b-form-input>
+                        </b-col>
+                      </b-row>
+                      <b-row>
+                        <b-col sm="8" md="8" lg="6" xl="6" class="mt-2">
+                          <b-form-checkbox plain v-model="curr_cancer.met_2" value="1" unchecked-value="0"> Brain</b-form-checkbox>
+                        </b-col>
+                        <b-col sm="8" md="8" lg="6" xl="6" class="pb-1">
+                          <b-form-input type="text" v-model="curr_cancer.met_2_date"></b-form-input>
+                        </b-col>
+                      </b-row>
+                      <b-row>
+                        <b-col sm="8" md="8" lg="6" xl="6" class="mt-2">
+                          <b-form-checkbox plain v-model="curr_cancer.met_3" value="1" unchecked-value="0"> Liver</b-form-checkbox>
+                        </b-col>
+                        <b-col sm="8" md="8" lg="6" xl="6" class="pb-1">
+                          <b-form-input type="text" v-model="curr_cancer.met_3_date"></b-form-input>
+                        </b-col>
+                      </b-row>
+                      <b-row>
+                        <b-col sm="8" md="8" lg="6" xl="6" class="mt-2">
+                          <b-form-checkbox plain v-model="curr_cancer.met_4" value="1" unchecked-value="0"> Lung</b-form-checkbox>
+                        </b-col>
+                        <b-col sm="8" md="8" lg="6" xl="6" class="pb-1">
+                          <b-form-input type="text" v-model="curr_cancer.met_4_date"></b-form-input>
+                        </b-col>
+                      </b-row>
+                      <b-row>
+                        <b-col sm="8" md="8" lg="6" xl="6" class="mt-2">
+                          <b-form-checkbox plain v-model="curr_cancer.met_5" value="1" unchecked-value="0"> Lymph Node</b-form-checkbox>
+                        </b-col>
+                        <b-col sm="8" md="8" lg="6" xl="6" class="pb-1">
+                          <b-form-input type="text" v-model="curr_cancer.met_5_date"></b-form-input>
+                        </b-col>
+                      </b-row>
+                      <b-row>
+                        <b-col sm="8" md="8" lg="6" xl="6" class="mt-2">
+                          <b-form-checkbox plain v-model="curr_cancer.met_6" value="1" unchecked-value="0"> Peritoneum</b-form-checkbox>
+                        </b-col>
+                        <b-col sm="8" md="8" lg="6" xl="6" class="pb-1">
+                          <b-form-input type="text" v-model="curr_cancer.met_6_date"></b-form-input>
+                        </b-col>
+                      </b-row>
+                      <b-row>
+                        <b-col sm="8" md="8" lg="6" xl="6" class="mt-2">
+                          <b-form-checkbox plain v-model="curr_cancer.met_7" value="1" unchecked-value="0"> Other</b-form-checkbox>
+                        </b-col>
+                        <b-col sm="8" md="8" lg="6" xl="6" class="pb-1">
+                          <b-form-input type="text" v-model="curr_cancer.met_7_date"></b-form-input>
+                        </b-col>
+                        <b-col sm="4" md="4" lg="3" xl="3" class="mt-2">
+                          <label>ระบุ:</label>
+                        </b-col>
+                        <b-col sm="8" md="8" lg="9" xl="9">
+                          <b-form-input type="text" v-model="curr_cancer.met_7_other"></b-form-input>
+                        </b-col>
+                      </b-row>
+                    </div>
                   </b-td>
-                  <b-td class="w-200px" v-show="old_cancer.diagnosis_date != null">
+                  <b-td class="w-200px pt-10px" v-show="old_cancer.diagnosis_date != null">
                     <b-row>
                       <b-col md="12">
                         <b-form-checkbox plain v-model="old_cancer.met_1" value="1" unchecked-value="0" disabled class="pb-20px">
@@ -445,7 +498,7 @@
                       </b-col>
                     </b-row>
                   </b-td>
-                  <b-td class="w-200px" v-for="cancer in cancers" :key="cancer.id">
+                  <b-td class="w-200px pt-10px" v-for="cancer in cancers" :key="cancer.id">
                     <b-row>
                       <b-col md="12">
                         <b-form-checkbox plain v-model="cancer.met_1" value="1" unchecked-value="0" disabled class="pb-20px">
@@ -484,58 +537,59 @@
                       </b-col>
                     </b-row>
                   </b-td>
+                  <b-td></b-td>
                 </b-tr>
                 <b-tr>
-                  <b-td class="w-150px fw-bold" sticky-column variant="info">44. Treatment</b-td>
-                  <b-td class="w-300px text-nowrap p-1">
-                    <b-row v-for="(treat, idx) in curr_cancer.treatmentsn" :key="treat.id">
-                      <b-col md="12">
-                        <span class="fw-bold">
-                          {{ treat.treatment_code }}<span v-show="treat.treatment_date"> ({{ treat.treatment_date | moment('add', '543 years', 'DD/MM/YYYY') }})</span>
-                        </span>
-                      </b-col>
-                      <b-col md="12">{{ treat.note }}</b-col>
-                      <b-col md="12" v-show="idx < curr_cancer.treatmentsn.length - 1"><hr class="m-1" /></b-col>
-                    </b-row>
+                  <b-td class="w-450px fw-bold" sticky-column variant="info">
+                    <div class="box-label">44. Treatment</div>
+                    <div class="box-input">
+                      <b-row v-for="(treat, idx) in curr_cancer.treatmentsn" :key="treat.id">
+                        <b-col md="12"><span class="fw-bold w-100px">Treatment :</span> {{ treat.treatment_code }}</b-col>
+                        <b-col md="12"><span class="fw-bold">เริ่มต้น :</span> {{ treat.treatment_date | moment('add', '543 years', 'DD/MM/YYYY') }}</b-col>
+                        <b-col md="12"><span class="fw-bold">สิ้นสุด :</span> {{ treat.treatment_date_end | moment('add', '543 years', 'DD/MM/YYYY') }}</b-col>
+                        <b-col md="12">{{ treat.note }}</b-col>
+                        <b-col md="12" v-show="idx < curr_cancer.treatmentsn.length - 1"><hr class="m-1" /></b-col>
+                      </b-row>
+                    </div>
                   </b-td>
-                  <b-td class="w-200px" v-show="old_cancer.diagnosis_date != null">
+                  <b-td class="w-200px pt-10px" v-show="old_cancer.diagnosis_date != null">
                     <b-row v-for="(treat, idx) in old_cancer.treatments" :key="treat.id">
-                      <b-col md="12">
-                        <span class="fw-bold">
-                          {{ treat.treatment_code }}<span v-show="treat.treatment_date"> ({{ treat.treatment_date | moment('add', '543 years', 'DD/MM/YYYY') }})</span>
-                        </span>
-                      </b-col>
+                      <b-col md="12"><span class="fw-bold w-100px">Treatment :</span> {{ treat.treatment_code }}</b-col>
+                      <b-col md="12"><span class="fw-bold">เริ่มต้น :</span> {{ treat.treatment_date | moment('add', '543 years', 'DD/MM/YYYY') }}</b-col>
+                      <b-col md="12"><span class="fw-bold">สิ้นสุด :</span> {{ treat.treatment_date_end | moment('add', '543 years', 'DD/MM/YYYY') }}</b-col>
                       <b-col md="12">{{ treat.note }}</b-col>
                       <b-col md="12" v-show="idx < old_cancer.treatments.length - 1"><hr class="m-1" /></b-col>
                     </b-row>
                   </b-td>
-                  <b-td class="w-200px" v-for="cancer in cancers" :key="cancer.id">
+                  <b-td class="w-200px pt-10px" v-for="cancer in cancers" :key="cancer.id">
                     <b-row v-for="(treat, idx) in cancer.treatments" :key="treat.id">
-                      <b-col md="12">
-                        <span class="fw-bold">
-                          {{ treat.treatment_code }}<span v-show="treat.treatment_date"> ({{ treat.treatment_date | moment('add', '543 years', 'DD/MM/YYYY') }})</span>
-                        </span>
-                      </b-col>
+                      <b-col md="12"><span class="fw-bold w-100px">Treatment :</span> {{ treat.treatment_code }}</b-col>
+                      <b-col md="12"><span class="fw-bold">เริ่มต้น :</span> {{ treat.treatment_date | moment('add', '543 years', 'DD/MM/YYYY') }}</b-col>
+                      <b-col md="12"><span class="fw-bold">สิ้นสุด :</span> {{ treat.treatment_date_end | moment('add', '543 years', 'DD/MM/YYYY') }}</b-col>
                       <b-col md="12">{{ treat.note }}</b-col>
                       <b-col md="12" v-show="idx < cancer.treatments.length - 1"><hr class="m-1" /></b-col>
                     </b-row>
                   </b-td>
+                  <b-td></b-td>
                 </b-tr>
                 <b-tr>
-                  <b-td class="w-150px fw-bold" sticky-column variant="info">45. Clinical Summary</b-td>
-                  <b-td class="w-300px text-nowrap p-1">
-                    <validation-provider :rules="{}" name="clinical_summary">
-                      <b-form-group>
-                        <b-form-textarea v-model="curr_cancer.clinical_summary" type="text" rows="3"></b-form-textarea>
-                      </b-form-group>
-                    </validation-provider>
+                  <b-td class="w-450px fw-bold" sticky-column variant="info">
+                    <div class="box-label">45. Clinical Summary</div>
+                    <div class="box-input">
+                      <validation-provider :rules="{}" name="clinical_summary">
+                        <b-form-group>
+                          <b-form-textarea v-model="curr_cancer.clinical_summary" type="text" rows="15"></b-form-textarea>
+                        </b-form-group>
+                      </validation-provider>
+                    </div>
                   </b-td>
-                  <b-td class="w-200px" v-show="old_cancer.diagnosis_date != null">
+                  <b-td class="w-200px pt-10px" v-show="old_cancer.diagnosis_date != null">
                     <a href="#" @click.stop.prevent="() => (curr_cancer.clinical_summary = old_cancer.clinical_summary)">{{ old_cancer.clinical_summary }}</a>
                   </b-td>
-                  <b-td class="w-200px" v-for="(cancer, idx) in cancers" :key="cancer.id">
+                  <b-td class="w-200px pt-10px" v-for="(cancer, idx) in cancers" :key="cancer.id">
                     <a href="#" @click.stop.prevent="() => (curr_cancer.clinical_summary = cancers[idx].clinical_summary)">{{ cancer.clinical_summary }}</a>
                   </b-td>
+                  <b-td></b-td>
                 </b-tr>
               </b-tbody>
             </b-table-simple>
@@ -776,7 +830,7 @@ export default {
           ...this.curr_patient,
           ...this.curr_cancer,
         }
-
+        let loader = this.$loading.show()
         this.axios
           .post('tcb/cancersums', param)
           .then((res) => {
@@ -784,13 +838,16 @@ export default {
               this.$nextTick(() => {
                 this.$parent.loadItems()
                 this.$bvModal.hide('modal-cancer-detail')
+                loader.hide()
               })
             } else {
               this.$toast.error(res.data.message)
+              loader.hide()
             }
           })
           .catch((error) => {
             console.log(error.response.data.message)
+            loader.hide()
           })
       })
     },
@@ -859,5 +916,14 @@ export default {
 <style scoped>
 .min-min-w-150px {
   min-width: 150px;
+}
+.box-label {
+  float: left;
+  width: 140px;
+  padding-top: 8px;
+}
+.box-input {
+  float: left;
+  width: 290px;
 }
 </style>

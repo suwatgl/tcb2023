@@ -24,22 +24,31 @@
                     <button type="button" class="btn btn-success ms-5px" @click="showPatientForm(curr_patient.id)"><i class="fas fa-pencil"></i> แก้ไขข้อมูลผู้ป่วย</button>
                     <button type="button" class="btn btn-xl btn-warning ms-5px" @click="showPatientAddCancer()"><i class="fas fa-pencil"></i> เพิ่มข้อมูลโรคมะเร็ง</button>
                     <button type="button" class="btn btn-xl btn-info ms-5px" @click="showPatientShowHistory()"><i class="fas fa-pencil"></i> ดูประวัติโรคมะเร็ง (anywhere)</button>
+                    <button type="button" class="btn btn-xl btn-danger ms-5px" @click="showRefer(curr_patient.id, curr_patient.title_name + curr_patient.name + ' ' + curr_patient.last_name)"><i class="fas fa-truck"></i> ส่ง Refer</button>
                     <button type="button" class="btn btn-xl btn-primary ms-5px" @click="showPatientShowCancer()" v-show="currentUser.roleCancer == 'Y' && false ? true : false"><i class="fas fa-pencil"></i> ดูรายละเอียดโรคมะเร็ง</button>
                   </b-col>
                 </b-row>
                 <dl class="row pt-2">
+                  <dt class="col-md-2 text-end topiclabel fs-5">สถานพยาบาล :</dt>
+                  <dd class="col-md-4 pt-1">{{ curr_patient.hospital_name }}</dd>
                   <dt class="col-md-2 text-end topiclabel fs-5">HN :</dt>
-                  <dd class="col-md-4">{{ curr_patient.hn_no }}</dd>
+                  <dd class="col-md-4 pt-1">{{ curr_patient.hn_no }}</dd>
                   <dt class="col-md-2 text-end topiclabel fs-5">ชื่อ-สกุล :</dt>
-                  <dd class="col-md-4">{{ curr_patient.title_name }}{{ curr_patient.name }} {{ curr_patient.last_name }}</dd>
+                  <dd class="col-md-4 pt-1">{{ curr_patient.title_name }}{{ curr_patient.name }} {{ curr_patient.last_name }}</dd>
                   <dt class="col-md-2 text-end topiclabel fs-5">เลขบัตรประชาชน :</dt>
-                  <dd class="col-md-4">{{ curr_patient.cid }}</dd>
-                  <dt class="col-md-2 text-end topiclabel fs-5">ว/ด/ป เกิด :</dt>
-                  <dd class="col-md-4">{{ curr_patient.birth_date | moment('add', '543 years', 'DD/MM/YYYY') }}</dd>
+                  <dd class="col-md-4 pt-1">{{ curr_patient.cid }}</dd>
                   <dt class="col-md-2 text-end topiclabel fs-5">เพศ :</dt>
-                  <dd class="col-md-4">{{ curr_patient.sex_name }}</dd>
-                  <dt class="col-md-2 text-end topiclabel fs-5">อายุ :</dt>
-                  <dd class="col-md-4">{{ curr_patient.birth_date | moment('from', 'now') }}</dd>
+                  <dd class="col-md-4 pt-1">{{ curr_patient.sex_name }}</dd>
+                  <dt class="col-md-2 text-end topiclabel fs-5">ว/ด/ป เกิด :</dt>
+                  <dd class="col-md-4 pt-1">{{ curr_patient.birth_date | moment('add', '543 years', 'DD/MM/YYYY') }} (อายุปัจจุบัน {{ curr_patient.birth_date | moment('from', 'now', true) }})</dd>
+                  <dt class="col-md-2 text-end topiclabel fs-5">ที่อยู่ :</dt>
+                  <dd class="col-md-4 pt-1">เลขที่ {{ curr_patient.address_no }} ม.{{ curr_patient.address_moo }} ต.{{ curr_patient.sub_district_name_th }} อ.{{ curr_patient.district_name_th }} จ.{{ curr_patient.province_name_th }} {{ curr_patient.address_zipcode }}</dd>
+                  <dt class="col-md-2 text-end topiclabel fs-5">อีเมล์ :</dt>
+                  <dd class="col-md-4 pt-1">{{ curr_patient.email }}</dd>
+                  <dt class="col-md-2 text-end topiclabel fs-5">โทรศัพท์ 1 :</dt>
+                  <dd class="col-md-4 pt-1">{{ curr_patient.telephone_1 }}</dd>
+                  <dt class="col-md-2 text-end topiclabel fs-5">โทรศัพท์ 2 :</dt>
+                  <dd class="col-md-4 pt-1">{{ curr_patient.telephone_2 }}</dd>
                 </dl>
               </b-card-text>
             </b-card>
@@ -48,13 +57,7 @@
         <b-col md="5">
           <panel title="ข้อมูลการเข้ารับบริการ" bodyClass="p-0" class="">
             <b-card>
-              <b-table :items="cancer_item" :fields="cancer_field" select-mode="single" ref="selectableTable" selectable selected-variant="danger" @row-selected="onRowSelected" hover bordered responsive>
-                <template #cell(index)="data">
-                  {{ data.index + 1 }}
-                </template>
-                <template #cell(hospital_code)="data">
-                  {{ data.value }}
-                </template>
+              <b-table bordered responsive :items="curr_cancers" :fields="cancer_field" @row-clicked="onRowSelected" class="tr-pointer">
                 <template #cell(entrance_date)="data">
                   {{ data.value | moment('add', '543 years', 'DD/MM/YYYY') }}
                 </template>
@@ -71,139 +74,119 @@
                     <table class="table table-bordered">
                       <thead>
                         <tr class="align-middle text-center">
-                          <th class="w-45px">ลำดับ</th>
                           <th class="w-150px text-nowrap">รายการ</th>
                           <th class="">รายละเอียดข้อมูลโรคมะเร็ง</th>
                         </tr>
                       </thead>
                       <tbody>
                         <tr class="align-middle">
-                          <td class="w-45px text-center">25</td>
-                          <td class="w-150px text-nowrap">วันที่เข้ารับบริการ</td>
+                          <th class="w-150px text-nowrap">25. วันที่เข้ารับบริการ</th>
                           <td class="pt-1px pb-1px">
                             {{ curr_cancer.entrance_date | moment('add', '543 years', 'DD/MM/YYYY') }}
                           </td>
                         </tr>
                         <tr class="align-middle">
-                          <td class="w-45px text-center">26</td>
-                          <td class="w-150px text-nowrap">สิทธิการรักษา</td>
+                          <th class="w-150px text-nowrap">26. สิทธิการรักษา</th>
                           <td class="pt-1px pb-1px">
                             {{ curr_cancer.finance_support_text }}
                           </td>
                         </tr>
                         <tr class="align-middle">
-                          <td class="w-45px text-center">27</td>
-                          <td class="w-150px text-nowrap">ว/ด/ป ที่วินิจฉัย</td>
+                          <th class="w-150px text-nowrap">27. ว/ด/ป ที่วินิจฉัย</th>
                           <td class="pt-1px pb-1px">
                             {{ curr_cancer.diagnosis_date | moment('add', '543 years', 'DD/MM/YYYY') }}
                           </td>
                         </tr>
                         <tr class="align-middle">
-                          <td class="w-45px text-center">28</td>
-                          <td class="w-150px text-nowrap">วิธีวินิจฉัยในโรงพยาบาล</td>
+                          <th class="w-150px text-nowrap">28. วิธีวินิจฉัยในโรงพยาบาล</th>
                           <td class="pt-1px pb-1px">
                             {{ curr_cancer.diagnosis_text }}
                           </td>
                         </tr>
                         <tr class="align-middle">
-                          <td class="w-45px text-center">29</td>
-                          <td class="w-150px text-nowrap">วินิจฉัยนอก รพ</td>
+                          <th class="w-150px text-nowrap">29. วินิจฉัยนอก รพ</th>
                           <td class="pt-1px pb-1px">
-                            {{ curr_cancer.diagnosis_out == 1 ? 'Yes' : 'No' }}
+                            {{ curr_cancer.diagnosis_out == null ? '' : curr_cancer.diagnosis_out == 1 ? 'Yes' : 'No' }}
                           </td>
                         </tr>
                         <tr class="align-middle">
-                          <td class="w-45px text-center">30</td>
-                          <td class="w-150px text-nowrap">วันที่ตัดชิ้นเนื้อ</td>
+                          <th class="w-150px text-nowrap">30. วันที่ตัดชิ้นเนื้อ</th>
                           <td class="pt-1px pb-1px">
                             {{ curr_cancer.excision_in_cut_date | moment('add', '543 years', 'DD/MM/YYYY') }}
                           </td>
                         </tr>
                         <tr class="align-middle">
-                          <td class="w-45px text-center">31</td>
-                          <td class="w-150px text-nowrap">วันที่อ่านชิ้นเนื้อ</td>
+                          <th class="w-150px text-nowrap">31. วันที่อ่านชิ้นเนื้อ</th>
                           <td class="pt-1px pb-1px">
                             {{ curr_cancer.excision_in_read_date | moment('add', '543 years', 'DD/MM/YYYY') }}
                           </td>
                         </tr>
                         <tr class="align-middle">
-                          <td class="w-45px text-center">32</td>
-                          <td class="w-150px text-nowrap">Topography</td>
+                          <th class="w-150px text-nowrap">32. Topography</th>
                           <td class="pt-1px pb-1px">
                             {{ curr_cancer.topo_text }}
                           </td>
                         </tr>
                         <tr class="align-middle">
-                          <td class="w-45px text-center">33</td>
-                          <td class="w-150px text-nowrap">Recurrent</td>
+                          <th class="w-150px text-nowrap">33. Recurrent</th>
                           <td class="pt-1px pb-1px">
-                            {{ curr_cancer.recurrent == 1 ? 'Yes' : 'No' }}
+                            {{ curr_cancer.recurrent == null ? '' : curr_cancer.recurrent == 1 ? 'Yes' : 'No' }}
                           </td>
                         </tr>
                         <tr class="align-middle">
-                          <td class="w-45px text-center">34</td>
-                          <td class="w-150px text-nowrap">ว/ด/ป Recurrent</td>
+                          <th class="w-150px text-nowrap">34. ว/ด/ป Recurrent</th>
                           <td class="pt-1px pb-1px">
                             {{ curr_cancer.recurrent_date | moment('add', '543 years', 'DD/MM/YYYY') }}
                           </td>
                         </tr>
                         <tr class="align-middle">
-                          <td class="w-45px text-center">35</td>
-                          <td class="w-150px text-nowrap">Morphology</td>
+                          <th class="w-150px text-nowrap">35. Morphology</th>
                           <td class="pt-1px pb-1px">
                             {{ curr_cancer.morphology_text }}
                           </td>
                         </tr>
                         <tr class="align-middle">
-                          <td class="w-45px text-center">36</td>
-                          <td class="w-150px text-nowrap">Behaviour</td>
+                          <th class="w-150px text-nowrap">36. Behaviour</th>
                           <td class="pt-1px pb-1px">
                             {{ curr_cancer.behaviour_text }}
                           </td>
                         </tr>
                         <tr class="align-middle">
-                          <td class="w-45px text-center">37</td>
-                          <td class="w-150px text-nowrap">Grade</td>
+                          <th class="w-150px text-nowrap">37. Grade</th>
                           <td class="pt-1px pb-1px">
                             {{ curr_cancer.grade_text }}
                           </td>
                         </tr>
                         <tr class="align-middle">
-                          <td class="w-45px text-center">38</td>
-                          <td class="w-150px text-nowrap">T-N-M</td>
-                          <td class="pt-1px pb-1px">{{ curr_cancer.t_code }} - {{ curr_cancer.n_code }} - {{ curr_cancer.m_code }}</td>
+                          <th class="w-150px text-nowrap">38. T-N-M</th>
+                          <td class="pt-1px pb-1px">{{ t_list_arr[curr_cancer.t_code] }} - {{ n_list_arr[curr_cancer.n_code] }} - {{ m_list_arr[curr_cancer.m_code] }}</td>
                         </tr>
                         <tr class="align-middle">
-                          <td class="w-45px text-center">39</td>
-                          <td class="w-150px text-nowrap">ว/ด/ป TNM/Stage</td>
+                          <th class="w-150px text-nowrap">39. ว/ด/ป TNM/Stage</th>
                           <td class="pt-1px pb-1px">
                             {{ curr_cancer.tnm_date | moment('add', '543 years', 'DD/MM/YYYY') }}
                           </td>
                         </tr>
                         <tr class="align-middle">
-                          <td class="w-45px text-center">40</td>
-                          <td class="w-150px text-nowrap">Stage</td>
+                          <th class="w-150px text-nowrap">40. Stage</th>
                           <td class="pt-1px pb-1px">
-                            {{ stage_list[curr_cancer.stage_code] }}
+                            {{ stage_list_arr[curr_cancer.stage_code] }}
                           </td>
                         </tr>
                         <tr class="align-middle">
-                          <td class="w-45px text-center">41</td>
-                          <td class="w-150px text-nowrap">Extend</td>
+                          <th class="w-150px text-nowrap">41. Extend</th>
                           <td class="pt-1px pb-1px">
-                            {{ extend_list[curr_cancer.extension_code] }}
+                            {{ extension_list_arr[curr_cancer.extension_code] }}
                           </td>
                         </tr>
                         <tr class="align-middle">
-                          <td class="w-45px text-center">42</td>
-                          <td class="w-150px text-nowrap">ICD-10</td>
+                          <th class="w-150px text-nowrap">42. ICD-10</th>
                           <td class="pt-1px pb-1px">
-                            {{ curr_cancer.icd10_code }}
+                            {{ curr_cancer.icd10_text }}
                           </td>
                         </tr>
                         <tr class="align-middle">
-                          <td class="w-45px text-center">43</td>
-                          <td class="w-150px text-nowrap">Metastasis</td>
+                          <th class="w-150px text-nowrap">43. Metastasis</th>
                           <td class="pt-1px pb-1px">
                             <b-container fluid>
                               <b-row v-if="curr_cancer.met_1 == 1" class="pt-2">
@@ -238,34 +221,29 @@
                           </td>
                         </tr>
                         <tr class="align-middle">
-                          <td class="w-45px text-center">44</td>
-                          <td class="w-150px text-nowrap">Treatment</td>
+                          <th class="w-150px text-nowrap">44. Treatment</th>
                           <td class="text-nowrap ps-0 pt-1px pb-1px">
                             <b-container fluid>
                               <b-row v-for="(treat, idx) in curr_cancer.treatments" :key="treat.id" class="pt-2">
-                                <b-col md="6">
-                                  <span class="fw-bold">{{ treat.treatment_code }}</span>
-                                </b-col>
-                                <b-col md="6"><span class="fw-bold">วันที่:</span> {{ treat.treatment_date | moment('add', '543 years', 'DD/MM/YYYY') }}</b-col>
+                                <b-col md="12"><span class="fw-bold w-100px">Treatment :</span> {{ treat.treatment_code }}</b-col>
                                 <b-col md="12">
-                                  <span class="fw-bold">Note:</span>
-                                  <pre class="mb-2px">{{ treat.note }}</pre>
+                                  <span class="fw-bold">เริ่มต้น :</span> {{ treat.treatment_date | moment('add', '543 years', 'DD/MM/YYYY') }}
+                                  <span class="fw-bold">, สิ้นสุด :</span> {{ treat.treatment_date_end | moment('add', '543 years', 'DD/MM/YYYY') }}
                                 </b-col>
+                                <b-col md="12"><pre class="mb-2px">{{ treat.note }}</pre></b-col>
                                 <b-col md="12" v-show="idx < curr_cancer.treatments.length - 1"><hr class="m-1" /></b-col>
                               </b-row>
                             </b-container>
                           </td>
                         </tr>
                         <tr class="align-middle">
-                          <td class="w-45px text-center">45</td>
-                          <td class="w-150px text-nowrap">Clinical Summary</td>
+                          <th class="w-150px text-nowrap">45. Clinical Summary</th>
                           <td class="pt-1px pb-1px">
                             <pre class="mb-2px">{{ curr_cancer.clinical_summary }}</pre>
                           </td>
                         </tr>
                         <tr class="align-middle">
-                          <td class="w-45px text-center">46</td>
-                          <td class="w-150px text-nowrap">เอกสารแนบ</td>
+                          <th class="w-150px text-nowrap">46. เอกสารแนบ</th>
                           <td class="text-nowrap ps-0 pt-1px pb-1px">
                             <b-container fluid>
                               <b-row v-for="file in curr_cancer.files" :key="file.id" class="pt-2">
@@ -285,7 +263,8 @@
                   <b-container>
                     <b-row>
                       <b-col class="text-end">
-                        <button type="button" class="btn btn-success ms-5px" @click="showPatientFormCancerUpdate(curr_cancer.id)" :disabled="curr_cancer.id != undefined ? false : true"><i class="fas fa-pencil"></i> แก้ไขข้อมูลโรคมะเร็ง</button>
+                        <button type="button" class="btn btn-danger ms-5px" @click="showDelete(curr_cancer.id)" :disabled="curr_cancer.id != undefined && curr_cancer.hospital_code == currentUser.hosCode ? false : true"><i class="fas fa-trash"></i> ลบข้อมูลโรคมะเร็ง</button>
+                        <button type="button" class="btn btn-success ms-5px" @click="showPatientFormCancerUpdate(curr_cancer.id)" :disabled="curr_cancer.id != undefined && curr_cancer.hospital_code == currentUser.hosCode ? false : true"><i class="fas fa-pencil"></i> แก้ไขข้อมูลโรคมะเร็ง</button>
                       </b-col>
                     </b-row>
                   </b-container>
@@ -302,6 +281,7 @@
     <patient-form-cancer-update ref="patient_form_cancer_update"></patient-form-cancer-update>
     <patient-form-cancer-sum ref="patient_form_cancer_sum"></patient-form-cancer-sum>
     <patient-form-history ref="patient_form_history"></patient-form-history>
+    <patient-refer ref="patient_refer"></patient-refer>
   </div>
 </template>
 
@@ -314,6 +294,7 @@ import PatientFormCancer from './PatientFormCancer.vue'
 import PatientFormCancerUpdate from './PatientFormCancerUpdate.vue'
 import PatientFormCancerSum from './PatientFormCancerSum.vue'
 import PatientFormHistory from './PatientFormHistory.vue'
+import PatientRefer from './PatientRefer.vue'
 
 export default {
   name: 'PatientDetail',
@@ -323,31 +304,32 @@ export default {
     PatientFormCancerUpdate,
     PatientFormCancerSum,
     PatientFormHistory,
+    PatientRefer,
   },
   data() {
     return {
       curr_patient: new Patient(),
       curr_cancer: new PatientCancer(),
       curr_cancer_sum: new PatientCancer(),
-      cancer_item: [],
+      curr_cancers: [],
       cancer_field: [
         { key: 'entrance_date', label: 'วันที่รับบริการ', tdClass: 'text-center' },
         { key: 'name', label: 'โรงพยาบาล' },
         { key: 'icd10_code', label: 'ICD-10', tdClass: 'text-start' },
       ],
-      stage_list: [],
-      extend_list: [],
       diagnosis_list: [],
       icd10_list: [],
+      icd10_list_arr: [],
       topo_list: [],
       treatment_list: [],
       morphology_list: [],
       behaviour_list: [],
       grade_list: [],
-      t_list: [],
-      n_list: [],
-      m_list: [],
-      extension_list: [],
+      t_list_arr: [],
+      n_list_arr: [],
+      m_list_arr: [],
+      stage_list_arr: [],
+      extension_list_arr: [],
       lifestatus_list: [],
       deathcause_list: [],
       recurent_list: [],
@@ -364,45 +346,7 @@ export default {
     },
   },
   mounted() {
-    this.stage_list[0] = 'Stage 0'
-    this.stage_list[1] = 'Stage 1'
-    this.stage_list[2] = 'Stage 2'
-    this.stage_list[3] = 'Stage 3'
-    this.stage_list[4] = 'Stage 4'
-    this.stage_list[9] = 'ไม่ระบุ'
-    this.stage_list[10] = 'Stage 1a'
-    this.stage_list[11] = 'Stage 1a1'
-    this.stage_list[12] = 'Stage 1a2'
-    this.stage_list[13] = 'Stage 1b'
-    this.stage_list[14] = 'Stage 1b1'
-    this.stage_list[15] = 'Stage 1b2'
-    this.stage_list[16] = 'Stage 1c'
-    this.stage_list[17] = 'Stage 1s'
-    this.stage_list[20] = 'Stage 2a'
-    this.stage_list[21] = 'Stage 2a1'
-    this.stage_list[22] = 'Stage 2a2'
-    this.stage_list[23] = 'Stage 2b'
-    this.stage_list[24] = 'Stage 2c'
-    this.stage_list[30] = 'Stage 3a'
-    this.stage_list[31] = 'Stage 3b'
-    this.stage_list[32] = 'Stage 3c'
-    this.stage_list[33] = 'Stage 3c1'
-    this.stage_list[34] = 'Stage 3c2'
-    this.stage_list[39] = 'Locally Advanced'
-    this.stage_list[40] = 'Stage 4a'
-    this.stage_list[41] = 'Stage 4a1'
-    this.stage_list[42] = 'Stage 4a2'
-    this.stage_list[43] = 'Stage 4b'
-    this.stage_list[44] = 'Stage 4c'
-
-    this.extend_list[1] = 'In situ'
-    this.extend_list[2] = 'Localized'
-    this.extend_list[3] = 'Direct extension'
-    this.extend_list[4] = 'Regional lymph nodes'
-    this.extend_list[5] = 'Distant metastasis'
-    this.extend_list[8] = 'Not applicable'
-    this.extend_list[9] = 'Not know'
-
+    this.getReference()
     this.loadItems()
   },
   methods: {
@@ -413,9 +357,24 @@ export default {
       this.$refs.patient_form_cancer_update.showForm(id)
       // console.log(id)
     },
+    showRefer(id, full_name) {
+      this.$refs.patient_refer.showForm(id, full_name)
+    },
     // showPatientEditCancer(id) {
     //   this.$refs.patient_form_cancer.showForm(id)
     // },
+    showDelete(id) {
+      const h = this.$createElement
+      const titleModal = h('div', { domProps: { innerHTML: '<i class="fa fa-trash"></i> ยืนยันการลบข้อมูล' } })
+      this.$bvModal.msgBoxConfirm('ท่านต้องการลบข้อมูลโรคมะเร็งที่เลือกนี้ ใช่หรือไม่.', { title: [titleModal], size: 'sm', okVariant: 'danger', okTitle: 'ใช่', cancelTitle: 'ยกเลิก' }).then((value) => {
+        if (value) {
+          this.axios.delete(`tcb/cancers/${id}`).then(() => {
+            this.$toast.success('ลบข้อมูลเรียบร้อย.')
+            this.loadItems()
+          })
+        }
+      })
+    },
     showPatientAddCancer() {
       this.$refs.patient_form_cancer.showForm(this.curr_patient.id, {
         id: this.curr_patient.id,
@@ -439,21 +398,47 @@ export default {
     },
     loadItems() {
       let id = this.$route.params.id
-      this.axios.get(`tcb/patients/${id}?detail=1`).then((response) => {
-        this.curr_patient = response.data
-        this.axios.get(`tcb/cancers?t=get-patient-cancer-item&patient_id=${this.curr_patient.id}&detail=1`).then((response) => {
-          this.cancer_item = response.data
+      this.axios.get(`tcb/patients?t=get-patient-by-id&id=${id}`).then((res1) => {
+        this.curr_patient = res1.data
+        this.axios.get(`tcb/cancers?t=get-cancer-by-patient_id&patient_id=${this.curr_patient.id}`).then((res2) => {
+          this.curr_cancers = res2.data
+          this.$nextTick(() => {
+            if (this.curr_cancers.length > 0) {
+              this.curr_cancers[0]._rowVariant = 'danger'
+              let loader = this.$loading.show()
+              this.axios
+                .get('tcb/cancers/' + this.curr_cancers[0].id)
+                .then((response) => {
+                  this.curr_cancer = response.data
+                  loader.hide()
+                })
+                .catch((error) => {
+                  console.log(error.response.data.message)
+                  loader.hide()
+                })
+            }
+          })
         })
-        this.axios.get(`tcb/cancersums?patient_id=${this.curr_patient.id}&detail=1`).then((response) => {
-          this.curr_cancer_sum = response.data
-        })
+        // this.axios.get(`tcb/cancersums?patient_id=${this.curr_patient.id}&detail=1`).then((res3) => {
+        //   this.curr_cancer_sum = res3.data
+        // })
       })
     },
-    onRowSelected(items) {
-      if (items[0]) {
-        this.axios.get('tcb/cancers/' + items[0].id).then((response) => {
-          this.curr_cancer = response.data
-        })
+    onRowSelected(items, idx) {
+      if (this.curr_cancer.id != items.id) {
+        this.curr_cancers.map((x) => (x._rowVariant = ''))
+        this.curr_cancers[idx]._rowVariant = 'danger'
+        let loader = this.$loading.show()
+        this.axios
+          .get('tcb/cancers/' + items.id)
+          .then((response) => {
+            this.curr_cancer = response.data
+            loader.hide()
+          })
+          .catch((error) => {
+            console.log(error.response.data.message)
+            loader.hide()
+          })
       }
     },
     getReference() {
@@ -465,19 +450,31 @@ export default {
         this.morphology_list = response.data.morphology_list
         this.behaviour_list = response.data.behaviour_list
         this.grade_list = response.data.grade_list
-        this.stage_list = response.data.stage_list
-        this.t_list = response.data.t_list
-        this.n_list = response.data.n_list
-        this.m_list = response.data.m_list
-        this.extension_list = response.data.extension_list
         this.lifestatus_list = response.data.lifestatus_list
         this.deathcause_list = response.data.deathcause_list
         this.recurent_list = response.data.recurent_list
         this.laterality_list = response.data.laterality_list
+
+        Object.entries(response.data.t_list).map(([key, val]) => (this.t_list_arr[key] = val))
+        Object.entries(response.data.n_list).map(([key, val]) => (this.n_list_arr[key] = val))
+        Object.entries(response.data.m_list).map(([key, val]) => (this.m_list_arr[key] = val))
+        Object.entries(response.data.icd10_list_arr).map(([key, val]) => (this.icd10_list_arr[key] = val))
+        Object.entries(response.data.stage_list).map(([key, val]) => (this.stage_list_arr[key] = val))
+        Object.entries(response.data.extension_list).map(([key, val]) => (this.extension_list_arr[key] = val))
+        console.log(this.icd10_list_arr)
       })
     },
   },
 }
 </script>
 
-<style></style>
+<style scope>
+.topiclabel {
+  color: rgb(8, 88, 8);
+  font-weight: bolder;
+  text-align: right;
+}
+.tr-pointer tr {
+  cursor: pointer;
+}
+</style>

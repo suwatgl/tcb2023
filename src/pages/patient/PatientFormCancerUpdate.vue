@@ -9,6 +9,36 @@
               <b-container fluid>
                 <b-row class="mt-2">
                   <b-col sm="4" md="4" lg="2" xl="2">
+                    <h6 class="text-pink-600 fs-5 pt-2">ข้อมูลผู้ป่วยมะเร็ง</h6>
+                  </b-col>
+                </b-row>
+                <dl class="row pt-2">
+                  <dt class="col-md-2 text-end topiclabel fs-5">สถานพยาบาล :</dt>
+                  <dd class="col-md-4 pt-1">{{ curr_patient.hospital_name }}</dd>
+                  <dt class="col-md-2 text-end topiclabel fs-5">HN :</dt>
+                  <dd class="col-md-4 pt-1">{{ curr_patient.hn_no }}</dd>
+                  <dt class="col-md-2 text-end topiclabel fs-5">ชื่อ-สกุล :</dt>
+                  <dd class="col-md-4 pt-1">{{ curr_patient.title_name }}{{ curr_patient.name }} {{ curr_patient.last_name }}</dd>
+                  <dt class="col-md-2 text-end topiclabel fs-5">เลขบัตรประชาชน :</dt>
+                  <dd class="col-md-4 pt-1">{{ curr_patient.cid }}</dd>
+                  <dt class="col-md-2 text-end topiclabel fs-5">เพศ :</dt>
+                  <dd class="col-md-4 pt-1">{{ curr_patient.sex_name }}</dd>
+                  <dt class="col-md-2 text-end topiclabel fs-5">ว/ด/ป เกิด :</dt>
+                  <dd class="col-md-4 pt-1">{{ curr_patient.birth_date | moment('add', '543 years', 'DD/MM/YYYY') }} (อายุปัจจุบัน {{ curr_patient.birth_date | moment('from', 'now', true) }})</dd>
+                  <dt class="col-md-2 text-end topiclabel fs-5">ที่อยู่ :</dt>
+                  <dd class="col-md-4 pt-1">เลขที่ {{ curr_patient.address_no }} ม.{{ curr_patient.address_moo }} ต.{{ curr_patient.sub_district_name_th }} อ.{{ curr_patient.district_name_th }} จ.{{ curr_patient.province_name_th }} {{ curr_patient.address_zipcode }}</dd>
+                  <dt class="col-md-2 text-end topiclabel fs-5">อีเมล์ :</dt>
+                  <dd class="col-md-4 pt-1">{{ curr_patient.email }}</dd>
+                  <dt class="col-md-2 text-end topiclabel fs-5">โทรศัพท์ 1 :</dt>
+                  <dd class="col-md-4 pt-1">{{ curr_patient.telephone_1 }}</dd>
+                  <dt class="col-md-2 text-end topiclabel fs-5">โทรศัพท์ 2 :</dt>
+                  <dd class="col-md-4 pt-1">{{ curr_patient.telephone_2 }}</dd>
+                </dl>
+                <b-row>
+                  <b-col><hr class="m-1" /></b-col>
+                </b-row>
+                <b-row class="mt-2">
+                  <b-col sm="4" md="4" lg="2" xl="2">
                     <h6 class="text-pink-600 fs-5 pt-2">ข้อมูลโรคมะเร็ง</h6>
                   </b-col>
                 </b-row>
@@ -17,7 +47,7 @@
                     <label for="input-entrance-date" class="fs-5">25. วันที่เข้ารับบริการ:</label>
                   </b-col>
                   <b-col sm="8" md="8" lg="3" xl="3" class="pb-1">
-                    <validation-provider rules="required" name="entrance_date">
+                    <validation-provider rules="required|date_format_th" name="entrance_date">
                       <b-form-group slot-scope="{ valid, errors }">
                         <masked-input autocomplete="off" pattern="11/11/1111" :class="'form-control ' + (errors[0] ? 'is-invalid' : valid ? 'is-valid' : '')" v-model="curr_cancer.entrance_date" :state="errors[0] ? false : valid ? true : null"></masked-input>
                       </b-form-group>
@@ -111,7 +141,7 @@
                     <label for="input-laterality" class="fs-5">34. ว/ด/ป Recurrent:</label>
                   </b-col>
                   <b-col sm="8" md="8" lg="2" xl="2" class="pb-1">
-                    <validation-provider :rules="{ required: curr_cancer.recurrent == 1 ? true : false }" name="recurrent_date">
+                    <validation-provider :rules="{ required: curr_cancer.recurrent == 1 ? true : false, date_format_th: true }" name="recurrent_date">
                       <b-form-group slot-scope="{ valid, errors }">
                         <masked-input autocomplete="off" pattern="11/11/1111" :class="'form-control ' + (errors[0] ? 'is-invalid' : valid ? 'is-valid' : '')" v-model="curr_cancer.recurrent_date" :disabled="curr_cancer.recurrent == 1 ? false : true" :state="errors[0] ? false : valid ? true : null"></masked-input>
                       </b-form-group>
@@ -357,15 +387,12 @@
                     <b-button size="sm" variant="success" @click="addTradtment"><i class="fas fa-plus"></i> เพิ่มรายการ Treatment</b-button>
                   </b-col>
                 </b-row>
-                <b-row>
-                  <b-col><hr class="m-1" /></b-col>
-                </b-row>
                 <div v-for="(treat, idx) in curr_treatments" :key="treat.id">
                   <b-row class="mt-2">
                     <b-col sm="4" md="4" lg="2" xl="2" class="mt-2 topiclabel">
                       <label for="input-met-7-other" class="fs-5">Treatment ครั้งที่ {{ idx + 1 }}:</label>
                     </b-col>
-                    <b-col sm="8" md="8" lg="4" xl="4">
+                    <b-col sm="8" md="8" lg="3" xl="3">
                       <validation-provider :rules="{ required: true }" :name="'treatment_code_' + idx">
                         <b-form-group slot-scope="{ valid, errors }">
                           <b-form-input plain :list="'treatment-list_' + idx" v-model="curr_treatments[idx].treatment_code" :state="errors[0] ? false : valid ? true : null"></b-form-input>
@@ -375,13 +402,23 @@
                         </b-form-group>
                       </validation-provider>
                     </b-col>
-                    <b-col sm="4" md="4" lg="3" xl="3" class="mt-2 topiclabel">
-                      <label for="input-met-7-other" class="fs-5">ว/ด/ป (พ.ศ.) Treatment :</label>
+                    <b-col sm="4" md="4" lg="1" xl="1" class="mt-2 topiclabel">
+                      <label for="input-met-7-other" class="fs-5">วันที่เริ่ม</label>
                     </b-col>
                     <b-col sm="8" md="8" lg="2" xl="2">
                       <validation-provider :rules="{ required: true, date_format_th: true }" :name="'treatment_date_' + idx">
                         <b-form-group slot-scope="{ valid, errors }">
                           <masked-input autocomplete="off" pattern="11/11/1111" v-model="curr_treatments[idx].treatment_date" :class="'form-control ' + (errors[0] ? 'is-invalid' : valid ? 'is-valid' : '')" :state="errors[0] ? false : valid ? true : null"></masked-input>
+                        </b-form-group>
+                      </validation-provider>
+                    </b-col>
+                    <b-col sm="4" md="4" lg="1" xl="1" class="mt-2 topiclabel">
+                      <label for="input-met-7-other" class="fs-5">วันที่สิ้นสุด</label>
+                    </b-col>
+                    <b-col sm="8" md="8" lg="2" xl="2">
+                      <validation-provider :rules="{ required: false, date_format_th: true }" :name="'treatment_date_end_' + idx">
+                        <b-form-group slot-scope="{ valid, errors }">
+                          <masked-input autocomplete="off" pattern="11/11/1111" v-model="curr_treatments[idx].treatment_date_end" :class="'form-control ' + (errors[0] ? 'is-invalid' : valid ? 'is-valid' : '')" :state="errors[0] ? false : valid ? true : null"></masked-input>
                         </b-form-group>
                       </validation-provider>
                     </b-col>
@@ -393,30 +430,30 @@
                   </b-row>
                   <b-row class="mt-2">
                     <b-col sm="4" md="4" lg="2" xl="2" class="mt-2 topiclabel">
-                      <label for="input-met-7-other" class="fs-5"></label>
-                    </b-col>
-                    <b-col sm="8" md="8" lg="2" xl="2" class="pt-2">
-                      <b-form-checkbox plain v-model="curr_treatments[idx].none_protocol" value="1" unchecked-value="0"><span class="topiclabel fs-5">None protocol</span> </b-form-checkbox>
-                    </b-col>
-                  </b-row>
-                  <b-row class="mt-2">
-                    <b-col sm="4" md="4" lg="2" xl="2" class="mt-2 topiclabel">
-                      <label for="input-met-7-other" class="fs-5">None protocol note :</label>
-                    </b-col>
-                    <b-col sm="8" md="8" lg="4" xl="4" class="mt-2 mb-2">
-                      <validation-provider :rules="{}">
-                        <b-form-group>
-                          <b-form-textarea v-model="curr_treatments[idx].none_protocol_note" type="text" rows="3"></b-form-textarea>
-                        </b-form-group>
-                      </validation-provider>
-                    </b-col>
-                    <b-col sm="4" md="4" lg="1" xl="1" class="mt-2 topiclabel">
                       <label for="input-met-7-other" class="fs-5">Note :</label>
                     </b-col>
-                    <b-col sm="8" md="8" lg="4" xl="4" class="mt-2 mb-2">
+                    <b-col sm="8" md="8" lg="9" xl="9" class="mt-2 mb-2">
                       <validation-provider :rules="{}" :name="'note_' + idx">
                         <b-form-group>
                           <b-form-textarea :id="'note_' + idx" v-model="curr_treatments[idx].note" type="text" rows="3"></b-form-textarea>
+                        </b-form-group>
+                      </validation-provider>
+                    </b-col>
+                  </b-row>
+                  <b-row class="mt-2" v-show="curr_treatments[idx].treatment_code == '3 Chemotherapy' ? true : false">
+                    <b-col sm="4" md="4" lg="2" xl="2" class="mt-2 topiclabel">
+                      <label for="input-met-7-other" class="fs-5">Non protocol</label>
+                    </b-col>
+                    <b-col sm="8" md="8" lg="1" xl="1" class="pt-2">
+                      <b-form-checkbox plain v-model="curr_treatments[idx].none_protocol" value="1" unchecked-value="0"><span class="topiclabel fs-5"></span> </b-form-checkbox>
+                    </b-col>
+                    <b-col sm="4" md="4" lg="2" xl="2" class="mt-2 topiclabel">
+                      <label for="input-met-7-other" class="fs-5">Non protocol regimen</label>
+                    </b-col>
+                    <b-col sm="8" md="8" lg="6" xl="6" class="mt-2 mb-2">
+                      <validation-provider :rules="{}">
+                        <b-form-group>
+                          <b-form-textarea v-model="curr_treatments[idx].none_protocol_note" type="text" rows="3"></b-form-textarea>
                         </b-form-group>
                       </validation-provider>
                     </b-col>
@@ -426,14 +463,13 @@
                   <b-col><hr class="m-1" /></b-col>
                 </b-row>
                 <b-row class="mt-2">
-                  <b-col sm="4" md="4" lg="12" xl="12">
+                  <b-col sm="4" md="4" lg="2" xl="2">
                     <h6 class="text-pink-600 fs-5 pt-2">45. Clinical Summary</h6>
                   </b-col>
-                  <b-col sm="4" md="4" lg="2" xl="2"></b-col>
-                  <b-col sm="8" md="8" lg="10" xl="10" class="mt-2 mb-2">
+                  <b-col sm="8" md="8" lg="9" xl="9" class="mt-2 mb-2">
                     <validation-provider :rules="{}" name="clinical_summary">
                       <b-form-group>
-                        <b-form-textarea id="clinical_summary" v-model="curr_cancer.clinical_summary" type="text" rows="3"></b-form-textarea>
+                        <b-form-textarea id="clinical_summary" v-model="curr_cancer.clinical_summary" type="text" rows="5"></b-form-textarea>
                       </b-form-group>
                     </validation-provider>
                   </b-col>
@@ -448,9 +484,6 @@
                   <b-col sm="4" md="4" lg="2" xl="2" class="mb-2">
                     <b-button size="sm" variant="success" @click="addFile"><i class="fas fa-plus"></i> เพิ่มเอกสารแนบ</b-button>
                   </b-col>
-                </b-row>
-                <b-row>
-                  <b-col><hr class="m-1" /></b-col>
                 </b-row>
                 <div v-for="(file, idx) in curr_files" :key="file.id">
                   <b-row class="mt-2">
@@ -467,12 +500,15 @@
                     <b-col sm="4" md="4" lg="1" xl="1" class="mt-2 topiclabel">
                       <label for="input-met-7-other" class="fs-5">File :</label>
                     </b-col>
-                    <b-col sm="8" md="8" lg="5" xl="5">
+                    <b-col v-if="curr_files[idx].id == undefined" sm="8" md="8" lg="5" xl="5">
                       <validation-provider :rules="{ required: true }" :name="'file_' + idx">
                         <b-form-group slot-scope="{ valid, errors }">
                           <b-form-file plain v-model="curr_files[idx].file" :ref="'file_' + idx" accept="image/jpeg, image/png, application/pdf" :class="'form-control ' + (errors[0] ? 'is-invalid' : valid ? 'is-valid' : '')" :state="errors[0] ? false : valid ? true : null"></b-form-file>
                         </b-form-group>
                       </validation-provider>
+                    </b-col>
+                    <b-col v-else sm="8" md="8" lg="5" xl="5" class="pt-10px">
+                      <a :href="'https://canceranywhere.com:8081/' + curr_files[idx].file_path" target="_blank">{{ curr_files[idx].file_name }}</a>
                     </b-col>
                     <b-col sm="4" md="4" lg="1" xl="1" class="mt-1">
                       <b-button size="sm" variant="danger" @click="removeFile(idx)">
@@ -481,9 +517,6 @@
                     </b-col>
                   </b-row>
                 </div>
-                <b-row>
-                  <b-col><hr class="m-1" /></b-col>
-                </b-row>
               </b-container>
             </form>
           </validation-observer>
@@ -711,8 +744,11 @@ export default {
     showForm(id) {
       let loader = this.$loading.show()
       this.getReferenceCancer()
-      this.axios.get(`tcb/cancers/${id}`).then((response) => {
+      this.axios.get(`tcb/cancers/${id}/edit`).then((response) => {
         this.curr_cancer = response.data
+        this.axios.get(`tcb/patients?t=get-patient-by-id&id=${this.curr_cancer.patient_id}`).then((res1) => {
+          this.curr_patient = res1.data
+        })
         this.curr_cancer.entrance_date = response.data.entrance_date ? moment(response.data.entrance_date).add(543, 'years').format('DD/MM/YYYY') : null
         this.curr_cancer.diagnosis_date = response.data.diagnosis_date ? moment(response.data.diagnosis_date).add(543, 'years').format('DD/MM/YYYY') : null
         this.curr_cancer.excision_in_cut_date = response.data.excision_in_cut_date ? moment(response.data.excision_in_cut_date).add(543, 'years').format('DD/MM/YYYY') : null
@@ -729,14 +765,24 @@ export default {
         this.curr_cancer.met_7_date = response.data.met_7_date ? moment(response.data.met_7_date).add(543, 'years').format('DD/MM/YYYY') : null
 
         this.curr_treatments = []
-        this.curr_files = []
         for (let key in response.data.treatments) {
           this.curr_treatments.push({
             treatment_code: response.data.treatments[key].treatment_code,
             treatment_date: response.data.treatments[key].treatment_date ? moment(response.data.treatments[key].treatment_date).add(543, 'years').format('DD/MM/YYYY') : null,
+            treatment_date_end: response.data.treatments[key].treatment_date_end ? moment(response.data.treatments[key].treatment_date_end).add(543, 'years').format('DD/MM/YYYY') : null,
             note: response.data.treatments[key].note,
             none_protocol: response.data.treatments[key].none_protocol,
             none_protocol_note: response.data.treatments[key].none_protocol_note,
+          })
+        }
+
+        this.curr_files = []
+        for (let key in response.data.files) {
+          this.curr_files.push({
+            id: response.data.files[key].id,
+            file_group_id: response.data.files[key].file_group_id,
+            file_name: response.data.files[key].file_name,
+            file: null,
           })
         }
 
@@ -760,23 +806,31 @@ export default {
         let param = {
           ...this.curr_cancer,
           ...{ curr_treatments: this.curr_treatments },
+          ...{ curr_files: this.curr_files },
+          ...{
+            _method: 'PUT',
+          },
         }
 
+        let loader = this.$loading.show()
         this.axios
-          .put(`tcb/cancers/${this.curr_cancer.id}`, param)
+          .post(`tcb/cancers/${this.curr_cancer.id}`, param, { headers: { 'Content-Type': 'multipart/form-data' } })
           .then((res) => {
             if (res.data.status) {
               this.$toast.success(res.data.message)
               this.$parent.loadItems()
               this.$nextTick(() => {
                 this.$bvModal.hide('modal-patient-form-cancer')
+                loader.hide()
               })
             } else {
               this.$toast.error(res.data.message)
+              loader.hide()
             }
           })
           .catch((error) => {
             console.log(error.response.data.message)
+            loader.hide()
           })
       })
     },
@@ -799,7 +853,7 @@ export default {
       })
     },
     addTradtment() {
-      this.curr_treatments.push({ treatment_code: null, treatment_date: null, none_protocol: 0, none_protocol_note: '', note: '' })
+      this.curr_treatments.push({ treatment_code: null, treatment_date: null, treatment_date_end: null, none_protocol: 0, none_protocol_note: '', note: '' })
     },
     removeTreatment(idx) {
       this.$nextTick(() => {

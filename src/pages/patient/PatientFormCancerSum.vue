@@ -117,7 +117,7 @@
                             {{ last_cancer_sum.recurrent_date }}
                           </td>
                           <td class="w-350px text-nowrap p-1">
-                            <validation-provider :rules="{ required: curr_cancer_sum.recurrent == 1 ? true : false }" name="recurrent_date">
+                            <validation-provider :rules="{ required: curr_cancer_sum.recurrent == 1 ? true : false, date_format_th: true }" name="recurrent_date">
                               <b-form-group slot-scope="{ valid, errors }">
                                 <masked-input autocomplete="off" pattern="11/11/1111" :class="'form-control ' + (errors[0] ? 'is-invalid' : valid ? 'is-valid' : '')" v-model="curr_cancer_sum.recurrent_date" :disabled="curr_cancer_sum.recurrent == 1 ? false : true" :state="errors[0] ? false : valid ? true : null"></masked-input>
                               </b-form-group>
@@ -264,10 +264,10 @@
                           <td class="w-45px text-center">39</td>
                           <td class="min-w-150px text-nowrap">ICD-10</td>
                           <td class="w-200px text-nowrap pt-1px pb-1px">
-                            {{ last_cancer.icd10_code }}
+                            {{ last_cancer.icd10_text }}
                           </td>
                           <td class="w-200px text-nowrap pt-1px pb-1px">
-                            {{ last_cancer_sum.icd10_code }}
+                            {{ last_cancer_sum.icd10_text }}
                           </td>
                           <td class="w-200px text-nowrap p-1">
                             <validation-provider :rules="{ required: true }" name="icd10_code">
@@ -780,6 +780,7 @@ export default {
           return
         }
 
+        let loader = this.$loading.show()
         this.axios
           .put(`tcb/cancersums/${this.curr_cancer_sum.id}`, this.curr_cancer_sum)
           .then((res) => {
@@ -788,13 +789,16 @@ export default {
               this.$parent.loadItems()
               this.$nextTick(() => {
                 this.$bvModal.hide('modal-patient-form-cancer-sum')
+                loader.hide()
               })
             } else {
               this.$toast.error(res.data.message)
+              loader.hide()
             }
           })
           .catch((error) => {
             this.$toast.error(error.response.data.message)
+            loader.hide()
           })
       })
     },

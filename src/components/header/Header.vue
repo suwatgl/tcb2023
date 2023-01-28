@@ -39,6 +39,23 @@
       <div class="navbar-nav">
         <header-mega-menu v-if="appOptions.appHeaderMegaMenu"></header-mega-menu>
 
+        <b-nav-item-dropdown v-show="notifs.length > 0 ? true : false" class="navbar-item" menu-class="dropdown-menu media-list" right toggle-class="navbar-link dropdown-toggle icon" no-caret>
+          <template slot="button-content">
+            <i class="fa fa-bell"></i>
+            <span class="badge danger">{{ notifs.length }}</span>
+          </template>
+          <div class="dropdown-header">แจ้งเตือน ({{ notifs.length }})</div>
+          <a v-for="(notif, idx) in notifs" :key="idx" @click.stop.prevent="gotoURL(notif.url_name)" href="javascript:;" class="dropdown-item media">
+            <div class="media-left">
+              <i class="fa fa-bug media-object bg-gray-500"></i>
+            </div>
+            <div class="media-body">
+              <h6 class="media-heading">{{ notif.message }} <i class="fa fa-exclamation-circle text-danger"></i></h6>
+              <div class="text-muted fs-10px">{{ notif.created_at }}</div>
+            </div>
+          </a>
+        </b-nav-item-dropdown>
+
         <b-nav-item-dropdown right menu-class="me-1" class="navbar-item navbar-user dropdown" toggle-class="navbar-link dropdown-toggle d-flex align-items-center" no-caret>
           <template slot="button-content">
             <div class="image image-icon bg-gray-800 text-gray-600">
@@ -75,6 +92,9 @@ export default {
   data() {
     return {
       appOptions: AppOptions,
+      countDown: 60,
+      polling: null,
+      notifs: [],
     }
   },
   computed: {
@@ -85,7 +105,36 @@ export default {
       return this.$store.state.auth.user
     },
   },
+  beforeDestroy() {
+    clearInterval(this.polling)
+  },
+  created: function () {
+    this.pollData()
+  },
+  mounted() {
+    this.getNotification()
+  },
   methods: {
+    gotoURL(rul_name) {
+      this.$router.push({ name: rul_name })
+    },
+    pollData() {
+      this.polling = setInterval(() => {
+        if (this.countDown == 0) {
+          this.getNotification()
+          this.countDown = 60
+        } else {
+          this.countDown--
+        }
+      }, 1000)
+    },
+    getNotification() {
+      this.axios.get(`tcb/patients?t=get-notification`).then((res) => {
+        if (res.data.length > 0) {
+          this.notifs = res.data
+        }
+      })
+    },
     logOut() {
       this.$store.dispatch('auth/logout')
       this.$router.push({ path: '/user/login-v3' })

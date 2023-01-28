@@ -48,7 +48,7 @@
         :lineNumbers="true"
         :select-options="{ enabled: false }"
         :search-options="{ enabled: true, skipDiacritics: true, placeholder: 'ค้นหาข้อมูล' }"
-        :pagination-options="{ enabled: true }"
+        :pagination-options="{ enabled: true, dropdownAllowAll: false }"
         :sort-options="{ enabled: false }"
         :totalRows="totalRecords"
         :isLoading.sync="isLoading"
@@ -78,7 +78,8 @@
             </div>
           </span>
           <span v-else-if="props.column.field == 'status'">
-            {{ refer_status[props.row.status] }}
+            {{ refer_status[props.row.status] }}<pre class="m-0">
+{{ props.row.message }}</pre>
           </span>
           <span v-else-if="props.column.field == 'birth_date'">
             {{ props.row.birth_date | moment('add', '543 years', 'DD/MM/YYYY') }}
@@ -138,7 +139,7 @@ export default {
         searchTerm: '',
         page: 1,
         per_page: 10,
-        refer_status_id: null,
+        refer_status_id: 0,
       },
       rows: [],
       refer_status: ['รอรับ Refer', 'รอขอข้อมูลเพิ่มเติม', 'รับ Refer แล้ว', 'ปฏิเสธรับ Refer'],

@@ -40,7 +40,8 @@
           { field: 'full_name', label: 'ชื่อ-สกุล' },
           // { field: 'birth_date', label: 'ว/ด/ป เกิด' },
           { field: 'cid', label: 'เลขบัตรประชาชน' },
-          { field: 'from_hospital_name', label: 'รพ.ส่งต่อ' },
+          { field: 'from_hospital_name', label: 'โรงพยาบาลส่งต่อ' },
+          { field: 'from_user_name', label: 'ผู้บันทึกส่งต่อ' },
           { field: 'status', label: 'สถานะ' },
           { field: 'btn', width: '45px', thClass: 'text-center', tdClass: 'text-center p-4px', label: 'Ac', html: true },
         ]"
@@ -48,7 +49,7 @@
         :lineNumbers="true"
         :select-options="{ enabled: false }"
         :search-options="{ enabled: true, skipDiacritics: true, placeholder: 'ค้นหาข้อมูล' }"
-        :pagination-options="{ enabled: true }"
+        :pagination-options="{ enabled: true, dropdownAllowAll: false }"
         :sort-options="{ enabled: false }"
         :totalRows="totalRecords"
         :isLoading.sync="isLoading"
@@ -71,7 +72,7 @@
         <template slot="table-row" slot-scope="props">
           <span v-if="props.column.field == 'full_name'">
             <div v-if="currentUser && currentUser.roleCancer == 'Y'">
-              <a href="#" @click.stop.prevent="showPatientShowHistory(props.row.patient_id, props.row.id)">{{ props.row.full_name }}</a>
+              <a href="#" @click.stop.prevent="showReferFormDetail(props.row.patient_id, props.row.id)">{{ props.row.full_name }}</a>
             </div>
             <div v-else>
               {{ props.row.full_name }}
@@ -91,7 +92,7 @@
               <template v-slot:button-content>
                 <b-icon icon="gear-fill" aria-hidden="true"></b-icon>
               </template>
-              <b-dropdown-item @click="showPatientShowHistory(props.row.patient_id, props.row.id)"> <b-icon icon="pencil" aria-hidden="true"></b-icon>&nbsp; แสดงประวัติโรคมะเร็ง </b-dropdown-item>
+              <b-dropdown-item @click="showReferFormDetail(props.row.patient_id, props.row.id)"> <b-icon icon="pencil" aria-hidden="true"></b-icon>&nbsp; แสดงประวัติโรคมะเร็ง </b-dropdown-item>
             </b-dropdown>
           </span>
           <span v-else>
@@ -102,17 +103,26 @@
     </panel>
 
     <refer-form-detail ref="refer_form_detail"></refer-form-detail>
+    <refer-form-receive ref="refer_form_receive"></refer-form-receive>
+    <refer-form-reject ref="refer_form_reject"></refer-form-reject>
+    <refer-form-request ref="refer_form_request"></refer-form-request>
   </div>
 </template>
 
 <script>
 import _ from 'lodash'
 import referFormDetail from './referFormDetail.vue'
+import referFormReceive from './referFormReceive.vue'
+import referFormReject from './referFormReject.vue'
+import referFormRequest from './referFormRequest.vue'
 
 export default {
   name: 'ReferReceiveTable',
   components: {
     referFormDetail,
+    referFormReceive,
+    referFormReject,
+    referFormRequest
   },
   data() {
     return {
@@ -137,7 +147,7 @@ export default {
         searchTerm: '',
         page: 1,
         per_page: 10,
-        refer_status_id: null,
+        refer_status_id: 0,
       },
       rows: [],
       refer_status: ['รอรับ Refer', 'รอขอข้อมูลเพิ่มเติม', 'รับ Refer แล้ว', 'ปฏิเสธรับ Refer'],
@@ -176,8 +186,17 @@ export default {
       }
       return c_class
     },
-    showPatientShowHistory(patient_id, refer_id) {
+    showReferFormDetail(patient_id, refer_id) {
       this.$refs.refer_form_detail.showForm(patient_id, refer_id)
+    },
+    showReferFormReceive(patient_id, refer_id) {
+      this.$refs.refer_form_receive.showForm(patient_id, refer_id)
+    },
+    showReferFormReject(patient_id, refer_id) {
+      this.$refs.refer_form_reject.showForm(patient_id, refer_id)
+    },
+    showReferFormRequest(patient_id, refer_id) {
+      this.$refs.refer_form_request.showForm(patient_id, refer_id)
     },
     loadItems() {
       this.isLoading = true

@@ -229,6 +229,7 @@ export default {
           note: this.note,
         }
 
+        let loader = this.$loading.show()
         this.axios
           .post('tcb/refers', param)
           .then((res) => {
@@ -236,13 +237,16 @@ export default {
               this.$nextTick(() => {
                 this.$parent.loadItems()
                 this.$bvModal.hide('modal-patient-refer')
+                loader.hide()
               })
             } else {
               this.$toast.error(res.data.message)
+              loader.hide()
             }
           })
           .catch((error) => {
             console.log(error.response.data.message)
+            loader.hide()
           })
       })
     },
@@ -260,4 +264,10 @@ export default {
 }
 </script>
 
-<style></style>
+<style scope>
+.topiclabel {
+  color: rgb(8, 88, 8);
+  font-weight: bolder;
+  text-align: right;
+}
+</style>
